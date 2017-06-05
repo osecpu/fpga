@@ -1,4 +1,4 @@
-SRCS = testbench.v
+SRCS = testbench.v memory.v
 
 testbench : $(SRCS) Makefile
 	iverilog -o testbench $(SRCS)

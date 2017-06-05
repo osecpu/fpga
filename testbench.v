@@ -7,7 +7,11 @@ module testbench();
 
 	// regは値を保持してくれる。
 	// wireは値を保持してくれない。
-	reg [1:0] counter;
+	reg [15:0] counter;
+
+	wire [3:0] data;
+
+	memory mem(clk, counter, data);
 
 	initial
 	begin
@@ -31,6 +35,10 @@ module testbench();
 	begin
 		counter = counter + 1;
 		out = counter[0] & counter[1];
+		if(counter === 1000) begin
+			$display ("Simulation end");
+			$finish;
+		end
 	end
 
 endmodule
