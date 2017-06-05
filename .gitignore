@@ -64,6 +64,7 @@ simulation/
 timing/
 testbench/
 *_sim/
+output_files
 
 testbench
 testb.vcd
