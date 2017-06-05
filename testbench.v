@@ -9,15 +9,18 @@ module testbench();
 	// wireは値を保持してくれない。
 	reg [15:0] counter;
 
-	wire [3:0] data;
+	reg [31:0] wdata;
+	reg we;
 
-	memory mem(clk, counter, data);
+	wire [31:0] data;
+
+	memory mem(clk, counter, data, wdata, we);
 
 	initial
 	begin
 		// 初期化ブロック。
 		// 出力する波形ファイルをここで指定する。
-		$dumpfile("testb.vcd");
+		$dumpfile("out.vcd");
 		$dumpvars(0, testbench);
 		counter = 0;
 	end
