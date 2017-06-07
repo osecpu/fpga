@@ -1,7 +1,10 @@
-SRCS = testbench.v
 
-testbench : $(SRCS) Makefile
-	iverilog -o testbench $(SRCS)
+%.out : %.v Makefile
+	iverilog -o $*.out -s testbench $*.v
 
-test : testbench
-	vvp testbench
+
+%.vcd : %.out Makefile
+	vvp $*.out
+	open $*.vcd
+
+
