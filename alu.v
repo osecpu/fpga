@@ -1,8 +1,23 @@
-module IntegerRegister(clk, r0, r1, rw, d0, d1, dw, we);
-	input clk, we;
-	input [5:0] r0, r1, rw;
-	input [31:0] dw;
-	output [31:0] d0, d1;
+module ALUController(d0, d1, dout, op);
+	// dout = d0 op d1	(cmp == 0)
+	// op:	0: OR
+	//		1: XOR
+	//		2: AND
+
+	//		4: ADD
+	//		5: SUB
+
+	//		6: MUL
+
+	//		8: SHL
+	//		9: SAR
+
+	//		A: DIV
+	//		B: MOD
+
+	input [31:0] d0, d1;
+	output [31:0] dout;
+	input[3:0] op;
 
 	reg [31:0] iregfile[5:0];	// 左が要素の幅、右がアドレスの幅
 
@@ -19,7 +34,7 @@ endmodule
 
 `timescale 1ns / 1ps
 // timescale [単位時間] / [丸め精度]
-/*
+
 module testbench();
 	reg clk;
 
@@ -70,4 +85,3 @@ module testbench();
 	end
 
 endmodule
-*/
