@@ -1,4 +1,4 @@
-module memory(clk, addr, data, wdata, we);
+module Memory(clk, addr, data, wdata, we);
 	// we: Write Enable
 	input clk, we;
 	input [15:0]addr;
@@ -26,7 +26,7 @@ endmodule
 `timescale 1ns / 1ps
 // timescale [単位時間] / [丸め精度]
 
-module testbench();
+module testbench_memory();
 	reg clk;
 
 	// regは値を保持してくれる。
@@ -46,7 +46,7 @@ module testbench();
 		// 初期化ブロック。
 		// 出力する波形ファイルをここで指定する。
 		$dumpfile("memory.vcd");
-		$dumpvars(0, testbench);
+		$dumpvars(0, testbench_memory);
 		PCinc = 0;
 		#1;
 		counter = 0;
