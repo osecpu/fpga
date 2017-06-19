@@ -10,12 +10,13 @@ module top(clk_org, seg, segsel);
 	output [7:0] seg;
 	output [3:0] segsel;
 	//
-	reg [5:0] ireg_r0, ireg_r1;
-	wire [5:0] ireg_rw;
+	reg [5:0] ireg_r1;
+	wire [5:0] ireg_rw, ireg_r0;
 	wire [31:0] ireg_d0, ireg_d1, ireg_dw;
 	wire ireg_we;
 	reg [15:0] pc = 0;
-	reg [3:0] current_state = 0;
+	reg	[3:0] current_state = 0;
+	wire	[3:0]	next_state;
 	reg reset;
 	wire clk;
 	
@@ -45,9 +46,7 @@ module top(clk_org, seg, segsel);
 	reg[31:0] instr1;
 	
 	//
-	LED7Seg led7seg(clk_org, seg, segsel, {instr0_op, pc[7:0]});
-	IntegerRegister ireg(clk_org, ireg_r0, ireg_r1, ireg_rw, ireg_d0, ireg_d1, ireg_dw, ireg_we);
-
+	
 	initial begin
 		reset = 1;
 		#20;
@@ -67,6 +66,7 @@ module top(clk_org, seg, segsel);
 			4'd1: begin
 				case (instr0_op)
 					8'h02:	genIRegWE = 1;	// LIMM16
+					8'hd2:	genIRegWE = 1; // CP
 					default:	genIRegWE = 0;
 				endcase
 			end
@@ -82,6 +82,7 @@ module top(clk_org, seg, segsel);
 			4'd1: begin
 				case (instr0_op)
 					8'h02:	genIRegRW = instr0_operand0;	// LIMM16
+					8'hd2:	genIRegRW = instr0_operand0;	// CP
 					default:	genIRegRW = 0;
 				endcase
 			end
@@ -97,6 +98,7 @@ module top(clk_org, seg, segsel);
 			4'd1: begin
 				case (instr0_op)
 					8'h02:	genIRegDW = instr0_imm16_ext;	// LIMM16
+					8'hd2:	genIRegDW = ireg_d0;	// CP
 					default:	genIRegDW = 0;
 				endcase
 			end
@@ -105,7 +107,23 @@ module top(clk_org, seg, segsel);
 			end
 		endcase
 	endfunction
+	
+	assign ireg_r0 = genIReg_R0(current_state);
+	function [5:0] genIReg_R0 (input [3:0] currentState);
+		case (currentState)
+			4'd1: begin
+				case (instr0_op)
+					8'hd2:	genIReg_R0 = instr0_operand1;	// CP
+					default:	genIReg_R0 = 0;
+				endcase
+			end
+			default: begin
+				genIReg_R0 = 0;
+			end
+		endcase
+	endfunction
 
+	assign next_state = genNextState(current_state);
 	function [3:0] genNextState (input [3:0] currentState);
 		case (currentState)
 			4'd0: begin
@@ -128,16 +146,20 @@ module top(clk_org, seg, segsel);
 			end
 		endcase
 	endfunction
-
+	
 	always @(posedge clk) begin
 		if(reset == 1) begin
 			pc = 0;
 			current_state = 0;
 		end
 		if(reset == 0) begin
-			current_state = genNextState(current_state);
+			current_state <= next_state;
 		end
 	end
+	
+	LED7Seg led7seg(clk_org, seg, segsel, {instr0_op, pc[7:0]});
+	IntegerRegister ireg(clk_org, ireg_r0, ireg_r1, ireg_rw, ireg_d0, ireg_d1, ireg_dw, ireg_we);
+	
 endmodule
 
 module testbench_top(seg, segsel);
