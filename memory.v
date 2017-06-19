@@ -25,7 +25,7 @@ endmodule
 
 `timescale 1ns / 1ps
 // timescale [単位時間] / [丸め精度]
-
+/*
 module testbench_memory();
 	reg clk;
 
@@ -74,3 +74,4 @@ module testbench_memory();
 	end
 
 endmodule
+*/

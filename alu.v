@@ -1,3 +1,4 @@
+/*
 module ALUController(d0, d1, dout, op);
 	// dout = d0 op d1	(cmp == 0)
 	// op:	0: OR
@@ -31,10 +32,11 @@ module ALUController(d0, d1, dout, op);
 			end
 		end
 endmodule
+*/
 
 `timescale 1ns / 1ps
 // timescale [単位時間] / [丸め精度]
-
+/*
 module testbench();
 	reg clk;
 
@@ -85,3 +87,4 @@ module testbench();
 	end
 
 endmodule
+*/

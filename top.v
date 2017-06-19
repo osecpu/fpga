@@ -4,23 +4,21 @@
 `timescale 1ns / 1ps
 // timescale [単位時間] / [丸め精度] 
 
-module OSECPU(clk_org, seg, segsel);
+module top(clk_org, seg, segsel);
 	input clk_org;
 	//
 	output [7:0] seg;
 	output [3:0] segsel;
 	//
-	reg [5:0] ireg_r0, ireg_r1, ireg_rw;
+	reg [5:0] ireg_r0, ireg_r1;
+	wire [5:0] ireg_rw;
 	wire [31:0] ireg_d0, ireg_d1, ireg_dw;
-	reg ireg_we;
+	wire ireg_we;
 	reg [15:0] pc = 0;
 	reg [3:0] current_state = 0;
 	reg reset;
 	wire clk;
-	//
-	LED7Seg led7seg(clk_org, seg, segsel, pc);
-	IntegerRegister ireg(clk_org, ireg_r0, ireg_r1, ireg_rw, ireg_d0, ireg_d1, ireg_dw, ireg_we);
-
+	
 	wire [15:0] mem_addr;
 	wire [31:0] mem_data;
 	wire [31:0] mem_wdata;
@@ -28,23 +26,27 @@ module OSECPU(clk_org, seg, segsel);
 	Memory mem(clk_org, mem_addr, mem_data, mem_wdata, mem_we);
 	assign mem_addr = genMemAddr(current_state);
 
-	reg[31:0] instr0;
+	reg[31:0] instr0 = 0;
 		wire [5:0] instr0_operand0;
 		wire [5:0] instr0_operand1;
 		wire [5:0] instr0_operand2;
 		wire [5:0] instr0_operand3;
 		wire [7:0] instr0_op;
-		wire [15:0] instr0_imm16;
-		wire [23:0] instr0_imm24;
+		wire [31:0] instr0_imm16_ext;
+		wire [31:0] instr0_imm24_ext;
 		//
-		assign instr0_operand0 = instr0[23:18];
-		assign instr0_operand1 = instr0[17:12];
-		assign instr0_operand2 = instr0[11: 6];
-		assign instr0_operand3 = instr0[ 5: 0];
-		assign instr0_op       = instr0[31:24];
-		assign instr0_imm16    = instr0[15: 0]; 
-		assign instr0_imm24    = instr0[23: 0]; 
+		assign instr0_operand0 	= instr0[23:18];
+		assign instr0_operand1 	= instr0[17:12];
+		assign instr0_operand2 	= instr0[11: 6];
+		assign instr0_operand3 	= instr0[ 5: 0];
+		assign instr0_op       	= instr0[31:24];
+		assign instr0_imm16_ext	= {{16{instr0[15]}},instr0[15: 0]}; 
+		assign instr0_imm24_ext	= {{ 8{instr0[23]}},instr0[23: 0]}; 
 	reg[31:0] instr1;
+	
+	//
+	LED7Seg led7seg(clk_org, seg, segsel, {instr0_op, pc[7:0]});
+	IntegerRegister ireg(clk_org, ireg_r0, ireg_r1, ireg_rw, ireg_d0, ireg_d1, ireg_dw, ireg_we);
 
 	initial begin
 		reset = 1;
@@ -58,18 +60,62 @@ module OSECPU(clk_org, seg, segsel);
 	always @(posedge clk_org) begin
 		clk_counter = clk_counter + 1;
 	end
+	
+	assign ireg_we = genIRegWE(current_state);
+	function genIRegWE(input [3:0] currentState);
+		case (currentState)
+			4'd1: begin
+				case (instr0_op)
+					8'h02:	genIRegWE = 1;	// LIMM16
+					default:	genIRegWE = 0;
+				endcase
+			end
+			default: begin
+				genIRegWE = 0;
+			end
+		endcase
+	endfunction
+	
+	assign ireg_rw = genIRegRW(current_state);
+	function [5:0] genIRegRW (input [3:0] currentState);
+		case (currentState)
+			4'd1: begin
+				case (instr0_op)
+					8'h02:	genIRegRW = instr0_operand0;	// LIMM16
+					default:	genIRegRW = 0;
+				endcase
+			end
+			default: begin
+				genIRegRW = 0;
+			end
+		endcase
+	endfunction
+		
+	assign ireg_dw = genIRegDW(current_state);
+	function [31:0] genIRegDW (input [3:0] currentState);
+		case (currentState)
+			4'd1: begin
+				case (instr0_op)
+					8'h02:	genIRegDW = instr0_imm16_ext;	// LIMM16
+					default:	genIRegDW = 0;
+				endcase
+			end
+			default: begin
+				genIRegDW = 0;
+			end
+		endcase
+	endfunction
 
 	function [3:0] genNextState (input [3:0] currentState);
 		case (currentState)
 			4'd0: begin
 				// fetch
 				pc = pc + 1;
+				instr0 = mem_data;
 				genNextState = 1;
 			end
 			4'd1: begin
 				// decode
-				instr0 = mem_data;
-				
 				genNextState = 0;
 			end
 		endcase
@@ -101,11 +147,11 @@ module testbench_top(seg, segsel);
 	reg clk, reset;
 	reg [15:0] pc = 0;
 	//
-	OSECPU top(clk, seg, segsel);
+	top top(clk, seg, segsel);
 
 	initial begin
-		$dumpfile("top.vcd");
-		$dumpvars(0, testbench_top);
+		//$dumpfile("top.vcd");
+		//$dumpvars(0, testbench_top);
 	end
 
 	always begin
@@ -121,10 +167,12 @@ module testbench_top(seg, segsel);
 
 	always @(posedge clk) begin
 		if(pc == 100) begin
-			$display ("Simulation end");
-			$finish;
+			//$display ("Simulation end");
+			//$finish;
 		end
-		clk_counter = clk_counter + 1;
+		//clk_counter = clk_counter + 1;
 	end
 
 endmodule
+
+

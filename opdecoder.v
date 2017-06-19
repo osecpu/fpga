@@ -1,3 +1,4 @@
+/*
 module OpDecoder(clk, );
 	// we: Write Enable
 	input clk, we;
@@ -22,10 +23,11 @@ module OpDecoder(clk, );
 		end
 
 endmodule
+*/
 
 `timescale 1ns / 1ps
 // timescale [単位時間] / [丸め精度]
-
+/*
 module testbench();
 	reg clk;
 
@@ -74,3 +76,4 @@ module testbench();
 	end
 
 endmodule
+*/

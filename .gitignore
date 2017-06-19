@@ -69,4 +69,4 @@ output_files
 *.out
 *.swp
 *.vcd
-
+*.txt
