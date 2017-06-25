@@ -1,5 +1,5 @@
-`define CLK_BIT 0
-//`define CLK_BIT 24	// for debug on hardware
+//`define CLK_BIT 0
+`define CLK_BIT 24	// for debug on hardware
 
 `timescale 1ns / 1ps
 // timescale [単位時間] / [丸め精度] 

@@ -16,4 +16,6 @@ run:
 	vvp $*.out
 	open $*.vcd
 
-
+reset_blaster :
+	killall jtagd
+	sudo ~/intelFPGA_lite/17.0/quartus/bin/jtagd
