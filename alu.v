@@ -22,8 +22,8 @@ module ALUController(d0, d1, dout, op);
 
 	reg [31:0] iregfile[5:0];	// 左が要素の幅、右がアドレスの幅
 
-	assign dout = calcALUResult(op);
-	function [31:0] calcALUResult(input [3:0] op);
+	assign dout = calcALUResult(op, d0, d1);
+	function [31:0] calcALUResult(input [3:0] op, input [31:0] d0, input [31:0] d1);
 		case (op)
 			4'h4:	calcALUResult = d0 + d1;
 			4'h5:	calcALUResult = d0 - d1;

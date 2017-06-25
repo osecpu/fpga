@@ -20,13 +20,18 @@ module LED7Seg(clk, seg, segsel, data);
 		
 		wire [1:0] dsel = counter[18:17];
 		assign segsel = ~(1 << dsel);
-		assign seg = decodev(dsel);
+		assign seg = decodev(dsel, v0, v1, v2, v3);
 		
 		always @ (posedge clk) begin
 			counter = counter + 1;
 		end
 		
-		function [7:0] decodev (input [1:0] vsel);
+		function [7:0] decodev (
+			input [1:0] vsel,
+			input [4:0] v0,
+			input [4:0] v1,
+			input [4:0] v2,
+			input [4:0] v3);
 			case (vsel)
 				2'b00: decodev = decode(v0);
 				2'b01: decodev = decode(v1);
