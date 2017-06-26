@@ -1,5 +1,5 @@
-//`define CLK_BIT 0
-`define CLK_BIT 24	// for debug on hardware
+`define CLK_BIT 0
+//`define CLK_BIT 24	// for debug on hardware
 
 `timescale 1ns / 1ps
 // timescale [単位時間] / [丸め精度] 
@@ -22,6 +22,9 @@ module top(clk_org, seg, segsel);
 	reg reset;
 	wire clk;
 	
+	reg [31:0] DR = 0;
+	reg [7:0] CR = 0;
+	
 	wire [15:0] mem_addr;
 	wire [31:0] mem_data;
 	wire [31:0] mem_wdata;
@@ -32,7 +35,7 @@ module top(clk_org, seg, segsel);
 	wire [31:0] alu_d0, alu_d1, alu_dout;
 	wire [3:0] alu_op;
 	ALUController alu(alu_d0, alu_d1, alu_dout, alu_op);
-
+	
 	reg[31:0] instr0 = 0;
 		wire [5:0] instr0_operand0;
 		wire [5:0] instr0_operand1;
@@ -63,7 +66,28 @@ module top(clk_org, seg, segsel);
 	assign clk = clk_counter[`CLK_BIT];
 
 	always @(posedge clk_org) begin
-		clk_counter = clk_counter + 1'b1;
+		if(CR[0] == 1'b0) begin
+			clk_counter = clk_counter + 1'b1;
+		end
+	end
+	
+	always @(posedge clk) begin
+		if(instr0_op == 8'hD3) begin
+			// CPDR
+			case (current_state) 
+				4'd1: begin
+					DR = ireg_d0;
+				end
+			endcase
+		end
+		if(instr0_op == 8'hF0) begin
+			// END
+			case (current_state) 
+				4'd1: begin
+					CR = 8'h01;
+				end
+			endcase
+		end
 	end
 	
 	assign ireg_we = genIRegWE(current_state, instr0_op);
@@ -137,6 +161,7 @@ module top(clk_org, seg, segsel);
 					8'hd2:	genIReg_R0 = ope1;	// CP
 					8'h14:	genIReg_R0 = ope1;	// ADD
 					8'h15:	genIReg_R0 = ope1;	// SUB
+					8'hd3:	genIReg_R0 = ope1;	// CPDR
 					default:	genIReg_R0 = 0;
 				endcase
 			end
@@ -258,7 +283,7 @@ module top(clk_org, seg, segsel);
 		end
 	end
 	
-	LED7Seg led7seg(clk_org, seg, segsel, {alu_dout[7:0], pc[7:0]});
+	LED7Seg led7seg(clk_org, seg, segsel, {DR[7:0], pc[7:0]});
 	IntegerRegister ireg(clk_org, ireg_r0, ireg_r1, ireg_rw, ireg_d0, ireg_d1, ireg_dw, ireg_we);
 	
 endmodule
