@@ -5,6 +5,10 @@ TOP_SRCS=top.v alu.v ireg.v led7seg.v memory.v
 top.out : $(TOP_SRCS) rom.hex Makefile
 	iverilog -o $*.out -s testbench_$* $(TOP_SRCS)
 
+clean:
+	-rm *.out
+	-rm *.vcd
+
 run:
 	make top.vcd
 
