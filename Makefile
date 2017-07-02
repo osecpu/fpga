@@ -1,4 +1,4 @@
-TOP_SRCS=top.v ireg.v led7seg.v memory.v
+TOP_SRCS=top.v alu.v ireg.v led7seg.v memory.v
 
 .PHONY: run
 

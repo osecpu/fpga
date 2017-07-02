@@ -6,35 +6,61 @@
 
 module top(clk_org, seg, segsel);
 	input clk_org;
-	//
 	output [7:0] seg;
 	output [3:0] segsel;
+	//
+	wire [31:0] osecpu_dr;
+	wire [15:0] osecpu_pc;
+	reg reset;
+	reg [`CLK_BIT:0] clk_counter = 0;
+	assign clk = clk_counter[`CLK_BIT];
+
+	LED7Seg led7seg(clk_org, seg, segsel, {osecpu_dr[7:0], osecpu_pc[7:0]});
+	OSECPU osecpu(clk_cpu, reset, osecpu_dr, osecpu_pc);
+
+	initial begin
+		reset = 1;
+		#20;
+		reset = 0;
+	end
+	always @(posedge clk_org) begin
+		clk_counter = clk_counter + 1'b1;
+	end
+endmodule
+
+module OSECPU(clk, reset, _dr, _pc);
+	input clk;
+	input reset;
+	output [31:0] _dr;
+	output [15:0] _pc;
 	//
 	wire [5:0] ireg_rw, ireg_r0, ireg_r1;
 	wire [31:0] ireg_d0, ireg_d1, ireg_dw;
 	wire ireg_we;
 	reg	[15:0] pc = 0;
+	assign _pc = pc;
 	wire	[15:0] pc_next;
 	reg	[3:0] current_state = 0;
 	wire	[3:0]	next_state;
 	assign pc_next = (next_state == 0 ? pc + 1'b1 : pc) ;
-	
-	reg reset;
-	wire clk;
-	
+	//
 	reg [31:0] DR = 0;
+	assign _dr = DR;
+	//
 	reg [7:0] CR = 0;
-	
+	//
 	wire [15:0] mem_addr;
 	wire [31:0] mem_data;
 	wire [31:0] mem_wdata;
 	reg mem_we;
-	Memory mem(clk_org, mem_addr, mem_data, mem_wdata, mem_we);
 	assign mem_addr = genMemAddr(current_state);
-	
+	//
 	wire [31:0] alu_d0, alu_d1, alu_dout;
 	wire [3:0] alu_op;
+	//
 	ALUController alu(alu_d0, alu_d1, alu_dout, alu_op);
+	IntegerRegister ireg(clk, ireg_r0, ireg_r1, ireg_rw, ireg_d0, ireg_d1, ireg_dw, ireg_we);
+	Memory mem(clk, mem_addr, mem_data, mem_wdata, mem_we);
 	
 	reg[31:0] instr0 = 0;
 		wire [5:0] instr0_operand0;
@@ -55,21 +81,6 @@ module top(clk_org, seg, segsel);
 	//reg[31:0] instr1;
 	
 	//
-	
-	initial begin
-		reset = 1;
-		#20;
-		reset = 0;
-	end
-
-	reg [`CLK_BIT:0] clk_counter = 0;
-	assign clk = clk_counter[`CLK_BIT];
-
-	always @(posedge clk_org) begin
-		if(CR[0] == 1'b0) begin
-			clk_counter = clk_counter + 1'b1;
-		end
-	end
 	
 	always @(posedge clk) begin
 		if(instr0_op == 8'hD3) begin
@@ -283,8 +294,6 @@ module top(clk_org, seg, segsel);
 		end
 	end
 	
-	LED7Seg led7seg(clk_org, seg, segsel, {DR[7:0], pc[7:0]});
-	IntegerRegister ireg(clk_org, ireg_r0, ireg_r1, ireg_rw, ireg_d0, ireg_d1, ireg_dw, ireg_we);
 	
 endmodule
 
@@ -293,13 +302,18 @@ module testbench_top(seg, segsel);
 	output [3:0] segsel;
 	//
 	reg clk, reset;
-	reg [15:0] pc = 0;
+	wire [31:0] osecpu_dr;
+	wire [15:0] osecpu_pc;
 	//
-	top top(clk, seg, segsel);
+	OSECPU osecpu(clk, reset, osecpu_dr, osecpu_pc);
 
 	initial begin
-		//$dumpfile("top.vcd");
-		//$dumpvars(0, testbench_top);
+		$dumpfile("top.vcd");
+		$dumpvars(0, testbench_top);
+		//
+		reset <= 1;
+		#20;
+		reset <= 0;
 	end
 
 	always begin
@@ -308,19 +322,16 @@ module testbench_top(seg, segsel);
 		clk <= 0; #20;
 	end
 
-	reg [`CLK_BIT:0] clk_counter = 0;
-	always @(posedge clk_counter[`CLK_BIT]) begin
-		pc = pc + 1;
-	end
-
 	always @(posedge clk) begin
-		if(pc == 100) begin
-			//$display ("Simulation end");
-			//$finish;
+		if(osecpu_pc == 6) begin
+			if(osecpu_dr == -4)
+				$display ("Simulation PASS");
+			else begin 
+				$display ("Simulation **** FAILED ****");
+			end
+			$finish;
 		end
-		//clk_counter = clk_counter + 1;
 	end
-
 endmodule
 
 
