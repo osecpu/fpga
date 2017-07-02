@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module Memory(clk, addr, data, wdata, we);
 	// we: Write Enable
 	input clk, we;

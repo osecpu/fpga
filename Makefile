@@ -1,9 +1,9 @@
-TOP_SRCS=top.v alu.v ireg.v led7seg.v memory.v datapath.v
+TOP_SRCS=testbench.v osecpu.v alu.v ireg.v led7seg.v memory.v datapath.v
 
 .PHONY: run
 
 top.out : $(TOP_SRCS) rom.hex Makefile
-	iverilog -o $*.out -s testbench_$* $(TOP_SRCS)
+	iverilog -Wtimescale -o $*.out -s testbench $(TOP_SRCS)
 
 clean:
 	-rm *.out

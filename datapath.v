@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module DataPath(
 	instr0, current_state,
 	alu_d0, alu_d1, alu_dout,

@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module LED7Seg(clk, seg, segsel, data);
 		// seg bits and led segment:
 		//  7

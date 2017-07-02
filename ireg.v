@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module IntegerRegister(clk, r0, r1, rw, d0, d1, dw, we);
 	input clk, we;
 	input [5:0] r0, r1, rw;

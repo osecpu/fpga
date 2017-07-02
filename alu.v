@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 
 module ALUController(d0, d1, dout, op);
 	// dout = d0 op d1	(cmp == 0)
@@ -34,7 +35,6 @@ module ALUController(d0, d1, dout, op);
 endmodule
 
 
-`timescale 1ns / 1ps
 // timescale [単位時間] / [丸め精度]
 module testbench_alu();
 	reg [31:0] d0, d1;
