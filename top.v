@@ -48,6 +48,7 @@ module OSECPU(clk, reset, _dr, _pc);
 	assign _dr = DR;
 	//
 	reg [7:0] CR = 0;
+	reg[31:0] instr0 = 0;
 	//
 	wire [15:0] mem_addr;
 	wire [31:0] mem_data;
@@ -59,10 +60,17 @@ module OSECPU(clk, reset, _dr, _pc);
 	wire [3:0] alu_op;
 	//
 	ALUController alu(alu_d0, alu_d1, alu_dout, alu_op);
-	IntegerRegister ireg(clk, ireg_r0, ireg_r1, ireg_rw, ireg_d0, ireg_d1, ireg_dw, ireg_we);
+	IntegerRegister ireg(
+		clk, ireg_r0, ireg_r1, ireg_rw, 
+		ireg_d0, ireg_d1, ireg_dw, 
+		ireg_we);
 	Memory mem(clk, mem_addr, mem_data, mem_wdata, mem_we);
+	DataPath datapath(
+		instr0, current_state,
+		alu_d0, alu_d1, alu_dout, 
+		ireg_r0, ireg_r1, ireg_rw,
+		ireg_d0, ireg_d1, ireg_dw);
 	
-	reg[31:0] instr0 = 0;
 		wire [5:0] instr0_operand0;
 		wire [5:0] instr0_operand1;
 		wire [5:0] instr0_operand2;
@@ -118,127 +126,7 @@ module OSECPU(clk, reset, _dr, _pc);
 			end
 		endcase
 	endfunction
-	
-	assign ireg_rw = genIRegRW(instr0_op, current_state, instr0_operand0);
-	function [5:0] genIRegRW (input [7:0] opcode, input [3:0] currentState, input [5:0]ope0);
-		case (currentState)
-			4'd1: begin
-				case (opcode)
-					8'h02:	genIRegRW = instr0_operand0;	// LIMM16
-					8'hd2:	genIRegRW = instr0_operand0;	// CP
-					8'h14:	genIRegRW = instr0_operand0; // ADD
-					8'h15:	genIRegRW = instr0_operand0; // SUB
-					default:	genIRegRW = 0;
-				endcase
-			end
-			default: begin
-				genIRegRW = 0;
-			end
-		endcase
-	endfunction
-		
-	assign ireg_dw = genIRegDW(instr0_op, current_state, instr0_imm16_ext, ireg_d0, alu_dout);
-	function [31:0] genIRegDW (
-		input [7:0] opcode,
-		input [3:0] currentState,
-		input [31:0] imm16_ext,
-		input [31:0] r0data,
-		input [31:0] alu_dout
-	);
-		case (currentState)
-			4'd1: begin
-				case (opcode)
-					8'h02:	genIRegDW = imm16_ext;	// LIMM16
-					8'hd2:	genIRegDW = r0data;	// CP
-					8'h14:	genIRegDW = alu_dout;	// ADD
-					8'h15:	genIRegDW = alu_dout;	// SUB
-					default:	genIRegDW = 0;
-				endcase
-			end
-			default: begin
-				genIRegDW = 0;
-			end
-		endcase
-	endfunction
-	
-	assign ireg_r0 = genIReg_R0(instr0_op, current_state, instr0_operand1);
-	function [5:0] genIReg_R0 (
-		input [7:0] opcode,
-		input [3:0] currentState,
-		input [5:0] ope1);
-		case (currentState)
-			4'd1: begin
-				case (opcode)
-					8'hd2:	genIReg_R0 = ope1;	// CP
-					8'h14:	genIReg_R0 = ope1;	// ADD
-					8'h15:	genIReg_R0 = ope1;	// SUB
-					8'hd3:	genIReg_R0 = ope1;	// CPDR
-					default:	genIReg_R0 = 0;
-				endcase
-			end
-			default: begin
-				genIReg_R0 = 0;
-			end
-		endcase
-	endfunction
-	
-	assign ireg_r1 = genIReg_R1(instr0_op, current_state, instr0_operand2);
-	function [5:0] genIReg_R1 (
-		input [7:0] opcode,
-		input [3:0] currentState,
-		input [5:0] ope2);
-		case (currentState)
-			4'd1: begin
-				case (opcode)
-					8'h14:	genIReg_R1 = ope2;	// ADD
-					8'h15:	genIReg_R1 = ope2;	// SUB
-					default:	genIReg_R1 = 0;
-				endcase
-			end
-			default: begin
-				genIReg_R1 = 0;
-			end
-		endcase
-	endfunction
-	
-	assign alu_d0 = genALU_d0(instr0_op, current_state, ireg_d0);
-	function [31:0] genALU_d0 (
-		input [7:0] opcode,
-		input [3:0] currentState, 
-		input [31:0] r0d);
-		case (currentState)
-			4'd1: begin
-				case (opcode)
-					8'h14:	genALU_d0 = r0d;	// ADD
-					8'h15:	genALU_d0 = r0d;	// SUB
-					default:	genALU_d0 = 0;
-				endcase
-			end
-			default: begin
-				genALU_d0 = 0;
-			end
-		endcase
-	endfunction
-	
-	assign alu_d1 = genALU_d1(instr0_op, current_state, ireg_d1);
-	function [31:0] genALU_d1 (
-		input [7:0] opcode,
-		input [3:0] currentState, 
-		input [31:0] r1d);
-		case (currentState)
-			4'd1: begin
-				case (opcode)
-					8'h14:	genALU_d1 = r1d;	// ADD
-					8'h15:	genALU_d1 = r1d;	// SUB
-					default:	genALU_d1 = 0;
-				endcase
-			end
-			default: begin
-				genALU_d1 = 0;
-			end
-		endcase
-	endfunction
-	
+
 	assign alu_op = genALU_op(instr0_op, current_state);
 	function [3:0] genALU_op (
 		input [7:0] opcode,
