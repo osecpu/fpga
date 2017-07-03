@@ -26,6 +26,10 @@ module ALUController(d0, d1, dout, op);
 	assign dout = calcALUResult(op, d0, d1);
 	function [31:0] calcALUResult(input [3:0] op, input [31:0] d0, input [31:0] d1);
 		case (op)
+			4'h0:	calcALUResult = d0 | d1;
+			4'h1:	calcALUResult = d0 ^ d1;
+			4'h2:	calcALUResult = d0 & d1;
+			//
 			4'h4:	calcALUResult = d0 + d1;
 			4'h5:	calcALUResult = d0 - d1;
 			default:	calcALUResult = 0;

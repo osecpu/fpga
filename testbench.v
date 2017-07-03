@@ -7,8 +7,9 @@ module testbench(seg, segsel);
 	reg clk, reset;
 	wire [31:0] osecpu_dr;
 	wire [15:0] osecpu_pc;
+	wire [7:0] osecpu_cr;
 	//
-	OSECPU osecpu(clk, reset, osecpu_dr, osecpu_pc);
+	OSECPU osecpu(clk, reset, osecpu_dr, osecpu_cr, osecpu_pc);
 
 	initial begin
 		$dumpfile("top.vcd");

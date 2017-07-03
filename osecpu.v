@@ -1,9 +1,10 @@
 `timescale 1ns / 1ps
-module OSECPU(clk, reset, dr, pc);
+module OSECPU(clk, reset, dr, cr, pc);
 	input clk;
 	input reset;
-	output [31:0] dr;
+	output reg [31:0] dr = 0;
 	output [15:0] pc;
+	output [7:0] cr;
 	//
 	wire [31:0] alu_d0, alu_d1, alu_dout;
 	wire [3:0] alu_op;
@@ -30,10 +31,7 @@ module OSECPU(clk, reset, dr, pc);
 	//
 	wire [31:0] instr0;
 	wire [3:0] current_state;
-	wire [7:0] cr;
 	wire [15:0] pc;
-	//
-	reg [31:0] dr;
 	//
 	Controller ctrl(clk, reset, 
 		mem_data, mem_addr, 
