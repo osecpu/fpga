@@ -2,8 +2,8 @@
 
 module DataPath(
 	instr0, current_state,
-	alu_d0, alu_d1, alu_dout,
-	ireg_r0, ireg_r1, ireg_rw,
+	alu_d0, alu_d1, alu_dout, alu_op,
+	ireg_r0, ireg_r1, ireg_rw, ireg_we,
 	ireg_d0, ireg_d1, ireg_dw);
 	//
 	input [31:0] instr0;
@@ -12,7 +12,9 @@ module DataPath(
 	input [31:0] ireg_d0, ireg_d1;
 	//
 	output reg [31:0] alu_d0, alu_d1;
+	output reg [3:0] alu_op;
 	output reg [5:0] ireg_r0, ireg_r1, ireg_rw;
+	output reg ireg_we;
 	output reg [31:0] ireg_dw;
 	//
 	wire [5:0] instr0_operand0;
@@ -42,6 +44,7 @@ module DataPath(
 						ireg_r1 = 0;
 						ireg_rw = instr0_operand0;
 						ireg_dw = instr0_imm16_ext;
+						ireg_we = 1;
 					end
 					8'hd2: begin // CP
 						alu_d0 = 0;
@@ -50,14 +53,18 @@ module DataPath(
 						ireg_r1 = 0;
 						ireg_rw = instr0_operand0;
 						ireg_dw = ireg_d0;
+						ireg_we = 1;
 					end
-					8'hd2, 8'h14, 8'h15: begin // ADD, SUB
+					8'h14, 8'h15: begin // ADD, SUB
 						alu_d0 = ireg_d0;
 						alu_d1 = ireg_d1;
 						ireg_r0 = instr0_operand1;
 						ireg_r1 = instr0_operand2;
 						ireg_rw = instr0_operand0;
 						ireg_dw = alu_dout;
+						ireg_we = 1;
+						//
+						alu_op = instr0_op[3:0];
 					end
 					8'hd3: begin // CPDR
 						alu_d0 = 0;
@@ -66,6 +73,7 @@ module DataPath(
 						ireg_r1 = 0;
 						ireg_rw = 0;
 						ireg_dw = 0;
+						ireg_we = 0;
 					end
 					default: begin
 						alu_d0 = 0;
@@ -74,6 +82,7 @@ module DataPath(
 						ireg_r1 = 0;
 						ireg_rw = 0;
 						ireg_dw = 0;
+						ireg_we = 0;
 					end
 				endcase
 			end
@@ -84,6 +93,7 @@ module DataPath(
 				ireg_r1 = 0;
 				ireg_rw = 0;
 				ireg_dw = 0;
+				ireg_we = 0;
 			end
 		endcase
 		#1;	// このwaitは必須（シミュレーションの無限ループを避けるため）
