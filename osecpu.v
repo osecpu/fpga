@@ -17,6 +17,12 @@ module OSECPU(clk, reset, _dr, _pc);
 	wire [15:0] preg_ofs0, preg_ofs1, preg_ofsw;
 	wire preg_we;
 	//
+	wire [11:0] lbt_lbid, lbt_lbidw;
+	wire [7:0] lbt_typ, lbt_typw;
+	wire [15:0] lbt_base, lbt_basew;
+	wire [15:0] lbt_count, lbt_countw;
+	wire lbt_we;
+	//
 	reg	[15:0] pc = 0;
 	assign _pc = pc;
 	wire	[15:0] pc_next;
@@ -46,6 +52,12 @@ module OSECPU(clk, reset, _dr, _pc);
 		preg_lbid0, preg_lbid1, preg_lbidw, 
 		preg_ofs0, preg_ofs1, preg_ofsw, 
 		preg_we);
+	LabelTable lbt(clk, 
+		lbt_lbid, lbt_lbidw, 
+		lbt_typ, lbt_typw, 
+		lbt_base, lbt_basew, 
+		lbt_count, lbt_countw, 
+		lbt_we);
 	Memory mem(clk, mem_addr, mem_data, mem_wdata, mem_we);
 	DataPath datapath(
 		instr0, current_state,

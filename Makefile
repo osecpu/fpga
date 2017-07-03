@@ -1,4 +1,5 @@
-TOP_SRCS=testbench.v osecpu.v alu.v ireg.v preg.v led7seg.v memory.v datapath.v
+TOP_SRCS=testbench.v osecpu.v \
+		 alu.v ireg.v preg.v labeltable.v led7seg.v memory.v datapath.v
 
 .PHONY: run
 
