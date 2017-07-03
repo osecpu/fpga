@@ -5,9 +5,18 @@ module OSECPU(clk, reset, _dr, _pc);
 	output [31:0] _dr;
 	output [15:0] _pc;
 	//
+	wire [31:0] alu_d0, alu_d1, alu_dout;
+	wire [3:0] alu_op;
+	//
 	wire [5:0] ireg_rw, ireg_r0, ireg_r1;
 	wire [31:0] ireg_d0, ireg_d1, ireg_dw;
 	wire ireg_we;
+	//
+	wire [5:0] preg_p0, preg_p1, preg_pw;
+	wire [11:0] preg_lbid0, preg_lbid1, preg_lbidw;
+	wire [15:0] preg_ofs0, preg_ofs1, preg_ofsw;
+	wire preg_we;
+	//
 	reg	[15:0] pc = 0;
 	assign _pc = pc;
 	wire	[15:0] pc_next;
@@ -27,14 +36,16 @@ module OSECPU(clk, reset, _dr, _pc);
 	reg mem_we;
 	assign mem_addr = genMemAddr(current_state);
 	//
-	wire [31:0] alu_d0, alu_d1, alu_dout;
-	wire [3:0] alu_op;
-	//
 	ALUController alu(alu_d0, alu_d1, alu_dout, alu_op);
-	IntegerRegister ireg(
-		clk, ireg_r0, ireg_r1, ireg_rw, 
+	IntegerRegister ireg(clk, 
+		ireg_r0, ireg_r1, ireg_rw, 
 		ireg_d0, ireg_d1, ireg_dw, 
 		ireg_we);
+	PointerRegister preg(clk, 
+		preg_p0, preg_p1, preg_pw, 
+		preg_lbid0, preg_lbid1, preg_lbidw, 
+		preg_ofs0, preg_ofs1, preg_ofsw, 
+		preg_we);
 	Memory mem(clk, mem_addr, mem_data, mem_wdata, mem_we);
 	DataPath datapath(
 		instr0, current_state,
