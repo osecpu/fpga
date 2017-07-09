@@ -13,6 +13,7 @@ module top(clk_org, seg, segsel);
 	wire [15:0] osecpu_pc;
 	reg reset;
 	reg [`CLK_BIT:0] clk_counter = 0;
+	wire clk, clk_cpu;
 	assign clk = clk_counter[`CLK_BIT];
 
 	LED7Seg led7seg(clk_org, seg, segsel, {osecpu_dr[7:0], osecpu_pc[7:0]});

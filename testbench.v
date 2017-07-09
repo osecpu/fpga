@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 
-module testbench(seg, segsel);
-	output [7:0] seg;
-	output [3:0] segsel;
+module testbench();
+	reg [7:0] seg;
+	reg [3:0] segsel;
 	//
 	reg clk, reset;
 	wire [31:0] osecpu_dr;

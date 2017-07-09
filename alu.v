@@ -17,14 +17,12 @@ module ALUController(d0, d1, dout, op);
 	//		A: DIV
 	//		B: MOD
 
-	input [31:0] d0, d1;
-	output [31:0] dout;
+	input signed [31:0] d0, d1;
+	output signed [31:0] dout;
 	input[3:0] op;
 
-	reg [31:0] iregfile[5:0];	// 左が要素の幅、右がアドレスの幅
-
 	assign dout = calcALUResult(op, d0, d1);
-	function [31:0] calcALUResult(input [3:0] op, input [31:0] d0, input [31:0] d1);
+	function signed [31:0] calcALUResult(input [3:0] op, input signed [31:0] d0, input signed [31:0] d1);
 		case (op)
 			4'h0:	calcALUResult = d0 | d1;
 			4'h1:	calcALUResult = d0 ^ d1;
@@ -43,15 +41,23 @@ endmodule
 
 // timescale [単位時間] / [丸め精度]
 module testbench_alu();
-	reg [31:0] d0, d1;
-	reg [3:0] op;
-	wire [31:0] dout;
+	reg signed [31:0] d0, d1;
+	reg signed [3:0] op;
+	wire signed [31:0] dout;
 	ALUController alu(d0, d1, dout, op);
 	
 	initial begin
 		d0 = 3;
 		d1 = 7;
 		op = 4;	//add
+		#2;
+		d0 = 3;
+		d1 = 7;
+		op = 8;	//SHL
+		#2;
+		d0 = -1024;
+		d1 = 8;
+		op = 9;	//SAR
 		#2;
 	end
 

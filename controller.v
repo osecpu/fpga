@@ -9,7 +9,6 @@ module Controller(clk, reset,
 	output [15:0] memaddr;
 	output reg [31:0] instr0 = 0;
 	output reg [3:0] current_state = 0;
-	output reg [31:0] dr = 0;
 	output reg [7:0] cr = 0;
 	output reg [15:0] pc = 0;
 	//

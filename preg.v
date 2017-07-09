@@ -8,7 +8,7 @@ module PointerRegister(clk, p0, p1, pw, lbid0, lbid1, lbidw, ofs0, ofs1, ofsw, w
 	output [15:0] ofs0, ofs1;
 	input [15:0] ofsw;
 
-	reg [31:0] lbidfile[5:0];	// 左が要素の幅、右がアドレスの幅
+	reg [11:0] lbidfile[5:0];	// 左が要素の幅、右がアドレスの幅
 	reg [15:0] ofsfile[5:0];	// 左が要素の幅、右がアドレスの幅
 
 	assign lbid0 = lbidfile[p0];
