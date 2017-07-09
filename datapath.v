@@ -55,7 +55,8 @@ module DataPath(
 						ireg_dw = ireg_d0;
 						ireg_we = 1;
 					end
-					8'h14, 8'h15: begin // ADD, SUB
+					8'h10, 8'h11, 8'h12, 8'h14, 8'h15, 8'h18, 8'h19: begin
+						// OR, XOR, AND ADD, SUB
 						alu_d0 = ireg_d0;
 						alu_d1 = ireg_d1;
 						ireg_r0 = instr0_operand1;

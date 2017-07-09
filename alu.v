@@ -32,6 +32,8 @@ module ALUController(d0, d1, dout, op);
 			//
 			4'h4:	calcALUResult = d0 + d1;
 			4'h5:	calcALUResult = d0 - d1;
+			4'h8:	calcALUResult = d0 << d1;
+			4'h9:	calcALUResult = d0 >>> d1;
 			default:	calcALUResult = 0;
 		endcase
 	endfunction

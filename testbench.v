@@ -32,6 +32,7 @@ module testbench(seg, segsel);
 				$display ("Simulation PASS");
 			else begin 
 				$display ("Simulation **** FAILED ****");
+				$display ("%x", osecpu_dr);
 			end
 			$finish;
 		end

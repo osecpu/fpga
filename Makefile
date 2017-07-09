@@ -7,6 +7,9 @@ TOP_SRCS=testbench.v osecpu.v \
 top.out : $(TOP_SRCS) rom.hex Makefile
 	iverilog -Wtimescale -o $*.out -s testbench $(TOP_SRCS)
 
+check:
+	iverilog -Wtimescale -o check.out -s check check.v
+
 clean:
 	-rm *.out
 	-rm *.vcd
@@ -16,11 +19,11 @@ run:
 	open top.vcd
 	
 test:
+	-rm top.vcd
 	make top.vcd
 
 %.out : %.v Makefile
 	iverilog -o $*.out -s testbench_$* $*.v
-
 
 %.vcd : %.out Makefile
 	vvp $*.out
