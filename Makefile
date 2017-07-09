@@ -9,6 +9,7 @@ top.out : $(TOP_SRCS) rom.hex Makefile
 
 check:
 	iverilog -Wtimescale -o check.out -s check check.v
+	vvp check.out
 
 clean:
 	-rm *.out
