@@ -2,11 +2,11 @@
 
 module LED7Seg(clk, seg, segsel, data);
 		// seg bits and led segment:
-		//  7
-		// 2 6
-		//  1
-		// 3 5
-		//  4  0
+		//  77
+		// 2  6
+		//  11
+		// 3  5
+		//  44  0
 		output [7:0] seg;
 		output [3:0] segsel;
 		input clk;
