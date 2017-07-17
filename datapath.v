@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-
+`include "def.v"
 module DataPath(
 	instr0, current_state,
 	alu_d0, alu_d1, alu_dout, alu_op,
@@ -35,9 +35,9 @@ module DataPath(
 	
 	always begin
 		case (current_state)
-			4'd1: begin
+			`STATE_EXEC: begin
 				case (instr0_op)
-					8'h02: begin // LIMM16
+					`OP_LIMM16: begin // LIMM16
 						alu_d0 = 0;
 						alu_d1 = 0;
 						ireg_r0 = 0;

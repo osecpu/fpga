@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "def.v"
 
 module testbench();
 	reg [7:0] seg;
@@ -27,7 +28,7 @@ module testbench();
 	end
 
 	always @(posedge clk) begin
-		if(osecpu_pc == 6) begin
+		if(osecpu_cr[`BIT_CR_HLT]) begin
 			if(osecpu_dr == -4)
 				$display ("Simulation PASS");
 			else begin 

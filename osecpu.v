@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "def.v"
 module OSECPU(clk, reset, dr, cr, pc);
 	input clk;
 	input reset;
@@ -67,7 +68,7 @@ module OSECPU(clk, reset, dr, cr, pc);
 		if(instr0_op == 8'hD3) begin
 			// CPDR
 			case (current_state) 
-				4'd1: begin
+				`STATE_EXEC: begin
 					dr = ireg_d0;
 				end
 			endcase

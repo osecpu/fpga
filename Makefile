@@ -23,6 +23,12 @@ test:
 	-rm top.vcd
 	make top.vcd
 
+test_mem :
+	make memctrl.vcd
+
+memctrl.out : memctrl.v Makefile
+	iverilog -o memctrl.out -s testbench_memctrl memctrl.v memory.v labeltable.v preg.v
+
 %.out : %.v Makefile
 	iverilog -o $*.out -s testbench_$* $*.v
 
