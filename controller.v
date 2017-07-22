@@ -9,7 +9,7 @@ module Controller(clk, reset,
 	input [31:0] memdata;
 	output [15:0] memaddr;
 	output reg [31:0] instr0 = 0;
-	output reg [31:0] instr1 = 0;
+	//output reg [31:0] instr1 = 0;
 	output reg [3:0] current_state = 0;
 	output reg [7:0] cr = 0;
 	output reg [15:0] pc = 0;
@@ -36,7 +36,7 @@ module Controller(clk, reset,
 			pc = 0;
 			current_state = `STATE_FETCH0;
 		end
-		if(reset == 0) begin
+		if(reset == 0 && cr[`BIT_CR_HLT] == 0) begin
 			if(current_state == `STATE_FETCH0) begin
 				instr0 = memdata;
 			end
