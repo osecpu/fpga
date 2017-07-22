@@ -37,5 +37,5 @@ test_addrdec :
 	vvp $*.out
 
 reset_blaster :
-	killall jtagd
+	-killall jtagd
 	sudo ~/intelFPGA_lite/17.0/quartus/bin/jtagd

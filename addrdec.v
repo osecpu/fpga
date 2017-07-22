@@ -6,7 +6,7 @@ module AddrDecoder(reqType, ofs, base, count, lbType, addr, invalid);
 	input [15:0] base;
 	input [15:0] count;
 	input [7:0] lbType;
-	input [15:0] addr;
+	output [15:0] addr;
 	output invalid;
 	//
 	assign addr = base + ofs;
