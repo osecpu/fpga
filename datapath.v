@@ -12,7 +12,7 @@ module DataPath(
 	input [31:0] ireg_d0, ireg_d1;
 	//
 	output reg [31:0] alu_d0, alu_d1;
-	output reg [3:0] alu_op;
+	output reg [3:0] alu_op = 0;
 	output reg [5:0] ireg_r0, ireg_r1, ireg_rw;
 	output reg ireg_we;
 	output reg [31:0] ireg_dw;
