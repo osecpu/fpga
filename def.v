@@ -4,8 +4,26 @@
 
 `define BIT_CR_HLT		0
 
+//
+// OPs
+//
 `define OP_LIMM16		8'h02
+
+`define OP_OR			8'h10
+`define OP_XOR			8'h11
+`define OP_AND			8'h12
+
+`define OP_ADD			8'h14
+`define OP_SUB			8'h15
+
+`define OP_SHL			8'h18
+`define OP_SAR			8'h19
+
+`define OP_CP			8'hd2
+`define OP_CPDR			8'hd3
+
 `define OP_HLT			8'hF0
+
 
 `define LBTYPE_UNDEFINED	8'h00
 `define LBTYPE_VPTR			8'h01

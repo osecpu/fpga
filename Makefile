@@ -1,11 +1,15 @@
-TOP_SRCS=testbench.v osecpu.v \
+COMMON_SRCS=osecpu.v \
 		 alu.v ireg.v preg.v labeltable.v \
 		 led7seg.v memory.v datapath.v controller.v
 
+TEST_SRCS=testbench.v $(COMMON_SRCS)
+TOP_SRCS=top.v $(COMMON_SRCS)
+
+
 .PHONY: run test
 
-top.out : $(TOP_SRCS) rom.hex Makefile
-	iverilog -Wtimescale -o $*.out -s testbench $(TOP_SRCS)
+testbench.out : $(TEST_SRCS) rom.hex Makefile
+	iverilog -Wtimescale -o $*.out -s testbench $(TEST_SRCS)
 
 check:
 	iverilog -Wtimescale -o check.out -s check check.v
@@ -16,12 +20,12 @@ clean:
 	-rm *.vcd
 
 run:
-	make top.vcd
-	open top.vcd
+	make testbench.vcd
+	open testbench.vcd
 	
 test:
-	-rm top.vcd
-	make top.vcd
+	-rm testbench.vcd
+	make testbench.vcd
 
 test_addrdec :
 	make memctrl.vcd

@@ -37,7 +37,7 @@ module DataPath(
 		case (current_state)
 			`STATE_EXEC: begin
 				case (instr0_op)
-					`OP_LIMM16: begin // LIMM16
+					`OP_LIMM16: begin
 						alu_d0 = 0;
 						alu_d1 = 0;
 						ireg_r0 = 0;
@@ -46,7 +46,7 @@ module DataPath(
 						ireg_dw = instr0_imm16_ext;
 						ireg_we = 1;
 					end
-					8'hd2: begin // CP
+					`OP_CP: begin
 						alu_d0 = 0;
 						alu_d1 = 0;
 						ireg_r0 = instr0_operand1;
@@ -55,8 +55,11 @@ module DataPath(
 						ireg_dw = ireg_d0;
 						ireg_we = 1;
 					end
-					8'h10, 8'h11, 8'h12, 8'h14, 8'h15, 8'h18, 8'h19: begin
-						// OR, XOR, AND ADD, SUB
+					`OP_OR, `OP_XOR, `OP_AND, 
+						`OP_ADD, `OP_SUB, 
+						`OP_SHL, `OP_SAR 
+						: begin
+						// OR, XOR, AND, ADD, SUB, SHL, SAR
 						alu_d0 = ireg_d0;
 						alu_d1 = ireg_d1;
 						ireg_r0 = instr0_operand1;
@@ -67,7 +70,7 @@ module DataPath(
 						//
 						alu_op = instr0_op[3:0];
 					end
-					8'hd3: begin // CPDR
+					`OP_CPDR: begin // CPDR
 						alu_d0 = 0;
 						alu_d1 = 0;
 						ireg_r0 = instr0_operand1;

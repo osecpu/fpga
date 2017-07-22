@@ -13,7 +13,7 @@ module testbench();
 	OSECPU osecpu(clk, reset, osecpu_dr, osecpu_cr, osecpu_pc);
 
 	initial begin
-		$dumpfile("top.vcd");
+		$dumpfile("testbench.vcd");
 		$dumpvars(0, testbench);
 		//
 		reset <= 1;
