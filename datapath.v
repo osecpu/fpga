@@ -1,12 +1,13 @@
 `timescale 1ns / 1ps
 `include "def.v"
 module DataPath(
-	instr0, current_state,
+	instr0, instr1, current_state,
 	alu_d0, alu_d1, alu_dout, alu_op,
 	ireg_r0, ireg_r1, ireg_rw, ireg_we,
 	ireg_d0, ireg_d1, ireg_dw);
 	//
 	input [31:0] instr0;
+	input [31:0] instr1;
 	input [3:0] current_state;
 	input [31:0] alu_dout;
 	input [31:0] ireg_d0, ireg_d1;
@@ -69,6 +70,15 @@ module DataPath(
 						ireg_we = 1;
 						//
 						alu_op = instr0_op[3:0];
+					end
+					`OP_LIMM32: begin
+						alu_d0 = 0;
+						alu_d1 = 0;
+						ireg_r0 = 0;
+						ireg_r1 = 0;
+						ireg_rw = instr0_operand0;
+						ireg_dw = instr1;
+						ireg_we = 1;
 					end
 					`OP_CPDR: begin // CPDR
 						alu_d0 = 0;

@@ -19,12 +19,16 @@
 `define OP_SHL			8'h18
 `define OP_SAR			8'h19
 
+`define OP_LIMM32		8'hd0
+
 `define OP_CP			8'hd2
 `define OP_CPDR			8'hd3
 
 `define OP_HLT			8'hF0
 
-
+//
+// Label Types
+//
 `define LBTYPE_UNDEFINED	8'h00
 `define LBTYPE_VPTR			8'h01
 `define LBTYPE_SINT8		8'h02

@@ -31,12 +31,13 @@ module OSECPU(clk, reset, dr, cr, pc);
 	reg mem_we;
 	//
 	wire [31:0] instr0;
+	wire [31:0] instr1;
 	wire [3:0] current_state;
 	wire [15:0] pc;
 	//
 	Controller ctrl(clk, reset, 
 		mem_data, mem_addr, 
-		instr0, current_state, 
+		instr0, instr1, current_state, 
 		cr, pc);
 	ALUController alu(alu_d0, alu_d1, alu_dout, alu_op);
 	IntegerRegister ireg(clk, 
@@ -56,7 +57,7 @@ module OSECPU(clk, reset, dr, cr, pc);
 		lbt_we);
 	Memory mem(clk, mem_addr, mem_data, mem_wdata, mem_we);
 	DataPath datapath(
-		instr0, current_state,
+		instr0, instr1, current_state,
 		alu_d0, alu_d1, alu_dout, alu_op,
 		ireg_r0, ireg_r1, ireg_rw, ireg_we,
 		ireg_d0, ireg_d1, ireg_dw);
