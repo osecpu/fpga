@@ -7,6 +7,7 @@
 //
 // OPs
 //
+`define OP_LBSET		8'h01
 `define OP_LIMM16		8'h02
 
 `define OP_OR			8'h10
