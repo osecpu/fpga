@@ -4,7 +4,8 @@ module DataPath(
 	instr0, instr1, current_state,
 	alu_d0, alu_d1, alu_dout, alu_op, alu_iscmp,
 	ireg_r0, ireg_r1, ireg_rw, ireg_we,
-	ireg_d0, ireg_d1, ireg_dw);
+	ireg_d0, ireg_d1, ireg_dw,
+	lbt_lbidw, lbt_typw, lbt_basew, lbt_countw, lbt_we);
 	//
 	input [31:0] instr0;
 	input [31:0] instr1;
@@ -13,33 +14,51 @@ module DataPath(
 	input [31:0] ireg_d0, ireg_d1;
 	//
 	output reg [31:0] alu_d0, alu_d1;
-	output reg [3:0] alu_op = 0;
-	output reg alu_iscmp = 0;
-	output reg [5:0] ireg_r0, ireg_r1, ireg_rw;
-	output reg ireg_we;
+	output reg [ 3:0] alu_op = 0;
+	output reg        alu_iscmp = 0;
+	output reg [ 5:0] ireg_r0, ireg_r1, ireg_rw;
+	output reg        ireg_we;
 	output reg [31:0] ireg_dw;
+	output reg [11:0] lbt_lbidw;
+	output reg [ 5:0] lbt_typw;
+	output reg [15:0] lbt_basew;
+	output reg [15:0] lbt_countw;
+	output reg        lbt_we;
 	//
-	wire [5:0] instr0_operand0	= instr0[23:18];
-	wire [5:0] instr0_operand1	= instr0[17:12];
-	wire [5:0] instr0_operand2	= instr0[11: 6];
-	wire [5:0] instr0_operand3	= instr0[5: 0];
-	wire [7:0] instr0_op		= instr0[31:24];
-	wire [31:0] instr0_imm16_ext= {{16{instr0[15]}},instr0[15: 0]};
+	wire [5:0]  instr0_operand0	 = instr0[23:18];
+	wire [5:0]  instr0_operand1	 = instr0[17:12];
+	wire [5:0]  instr0_operand2	 = instr0[11: 6];
+	wire [5:0]  instr0_operand3	 = instr0[ 5: 0];
+	wire [7:0]  instr0_op		 = instr0[31:24];
+	wire [31:0] instr0_imm16_ext = {{16{instr0[15]}},instr0[15: 0]};
+	wire [15:0] instr0_imm16     = instr0[15: 0];
+	//
+	wire [15:0] instr1_base      = instr1[31:16];
+	wire [15:0] instr1_count     = instr1[15: 0];
+
 	//
 	always begin
 		case (current_state)
 			`STATE_EXEC: begin
+				// LabelTable
 				case (instr0_op)
 					`OP_LBSET: begin
-						alu_d0 = 0;
-						alu_d1 = 0;
-						alu_iscmp = 0;
-						ireg_r0 = 0;
-						ireg_r1 = 0;
-						ireg_rw = instr0_operand0;
-						ireg_dw = instr0_imm16_ext;
-						ireg_we = 1;
+						lbt_lbidw = instr0_imm16;
+						lbt_typw = instr0_operand0;
+						lbt_basew = instr1_base;
+						lbt_countw = instr1_count;
+						lbt_we = 1;
 					end
+					default: begin
+						lbt_lbidw = 0;
+						lbt_typw = 0;
+						lbt_basew = 0;
+						lbt_countw = 0;
+						lbt_we = 0;
+					end
+				endcase
+				// ALU + IReg
+				case (instr0_op)
 					`OP_LIMM16: begin
 						alu_d0 = 0;
 						alu_d1 = 0;
@@ -132,6 +151,12 @@ module DataPath(
 				ireg_rw = 0;
 				ireg_dw = 0;
 				ireg_we = 0;
+				//
+				lbt_lbidw = 0;
+				lbt_typw = 0;
+				lbt_basew = 0;
+				lbt_countw = 0;
+				lbt_we = 0;
 			end
 		endcase
 		#1;	// このwaitは必須（シミュレーションの無限ループを避けるため）

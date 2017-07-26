@@ -1,6 +1,6 @@
 COMMON_SRCS=osecpu.v \
 		 alu.v ireg.v preg.v labeltable.v \
-		 led7seg.v memory.v datapath.v controller.v
+		 led7seg.v memory.v datapath.v controller.v mmu.v addrdec.v
 
 TEST_SRCS=testbench.v $(COMMON_SRCS)
 TOP_SRCS=top.v $(COMMON_SRCS)
@@ -22,13 +22,18 @@ clean:
 run:
 	make testbench.vcd
 	open testbench.vcd
-	
+
+testall:
+	make test_addrdec
+
 test:
 	-rm testbench.vcd
 	make testbench.vcd
 
 test_addrdec :
-	make memctrl.vcd
+	make addrdec.vcd
+test_mmu :
+	make mmu.vcd
 
 %.out : %.v Makefile
 	iverilog -Wall -o $*.out -s testbench_$* $*.v

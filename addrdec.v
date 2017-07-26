@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 `include "def.v"
 module AddrDecoder(reqType, ofs, base, count, lbType, addr, invalid);
-	input [7:0] reqType;
+	input [5:0] reqType;
 	input [15:0] ofs;
 	input [15:0] base;
 	input [15:0] count;
-	input [7:0] lbType;
+	input [5:0] lbType;
 	output [15:0] addr;
 	output invalid;
 	//
@@ -15,7 +15,7 @@ module AddrDecoder(reqType, ofs, base, count, lbType, addr, invalid);
 		reqType == lbType &&
 		ofs < count
 	);
-	function isValidLabelType(input [7:0] type);
+	function isValidLabelType(input [5:0] type);
 		case(reqType)
 			//`LBTYPE_UNDEFINED:;
 			`LBTYPE_VPTR:	isValidLabelType = 1'd1;
@@ -40,19 +40,19 @@ endmodule
 module testbench_addrdec();
 	reg clk;
 	//
-	reg [7:0] reqType;
+	reg [5:0] reqType;
 	reg [15:0] ofs;
 	reg [15:0] base;
 	reg [15:0] count;
-	reg [7:0] lbType;
+	reg [5:0] lbType;
 	wire [15:0] addr;
 	wire invalid;
 
 	AddrDecoder addrdec(reqType, ofs, base, count, lbType, addr, invalid);
 
 	initial begin
-		$dumpfile("memctrl.vcd");
-		$dumpvars(0, testbench_memctrl);
+		$dumpfile("addrdec.vcd");
+		$dumpvars(0, testbench_addrdec);
 		// all invalid
 		reqType = `LBTYPE_UNDEFINED;
 		ofs = 4;

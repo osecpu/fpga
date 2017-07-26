@@ -6,7 +6,7 @@ module MMU(clk,
 	lbidw, lbTypew, basew, countw, we);
 	input clk;
 	//
-	input [7:0] reqType;
+	input [5:0] reqType;
 	input [15:0] ofs;
 	input [11:0] lbid;
 	//
@@ -14,20 +14,14 @@ module MMU(clk,
 	output invalid;
 	//
 	input [11:0] lbidw;
-	input [7:0] lbTypew;
+	input [5:0] lbTypew;
 	input [15:0] basew;
 	input [15:0] countw;
 	input we;
 	//
 	wire [15:0] base;
 	wire [15:0] count;
-	wire [7:0] lbType;
-	//
-	wire [11:0] lbt_lbid, lbt_lbidw;
-	wire [7:0] lbt_typ, lbt_typw;
-	wire [15:0] lbt_base, lbt_basew;
-	wire [15:0] lbt_count, lbt_countw;
-	wire lbt_we;
+	wire [5:0] lbType;
 	//
 	LabelTable lbt(clk, 
 		lbid, lbidw, 
@@ -42,7 +36,7 @@ endmodule
 module testbench_mmu();
 	reg clk;
 	//
-	reg [7:0] reqType;
+	reg [5:0] reqType;
 	reg [15:0] ofs;
 	reg [11:0] lbid;
 	//
@@ -50,7 +44,7 @@ module testbench_mmu();
 	wire invalid;
 	//
 	reg [11:0] lbidw;
-	reg [7:0] lbTypew;
+	reg [5:0] lbTypew;
 	reg [15:0] basew;
 	reg [15:0] countw;
 	reg we;

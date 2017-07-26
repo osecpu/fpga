@@ -59,6 +59,7 @@ module Controller(clk, reset,
 			`STATE_FETCH0: begin
 				case(next_instr0_op)
 					`OP_LIMM32: genNextState = `STATE_FETCH1;
+					`OP_LBSET: genNextState = `STATE_FETCH1;
 					default: genNextState = `STATE_EXEC;
 				endcase
 			end
