@@ -20,6 +20,15 @@
 `define OP_SHL			8'h18
 `define OP_SAR			8'h19
 
+`define OP_CMPE			8'h20
+`define OP_CMPNE		8'h21
+`define OP_CMPL			8'h22
+`define OP_CMPGE		8'h23
+`define OP_CMPLE		8'h24
+`define OP_CMPG			8'h25
+`define OP_TSTZ			8'h26
+`define OP_TSTNZ		8'h27
+
 `define OP_LIMM32		8'hd0
 
 `define OP_CP			8'hd2

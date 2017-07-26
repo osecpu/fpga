@@ -1,39 +1,40 @@
 `timescale 1ns / 1ps
 
-module ALUController(d0, d1, dout, op);
-	// dout = d0 op d1	(cmp == 0)
-	// op:	0: OR
-	//		1: XOR
-	//		2: AND
-
-	//		4: ADD
-	//		5: SUB
-
-	//		6: MUL
-
-	//		8: SHL
-	//		9: SAR
-
-	//		A: DIV
-	//		B: MOD
-
+module ALUController(d0, d1, dout, op, iscmp);
+	// dout = d0 op d1
 	input signed [31:0] d0, d1;
 	output signed [31:0] dout;
 	input[3:0] op;
+	input iscmp;
 
 	assign dout = calcALUResult(op, d0, d1);
 	function signed [31:0] calcALUResult(input [3:0] op, input signed [31:0] d0, input signed [31:0] d1);
-		case (op)
-			4'h0:	calcALUResult = d0 | d1;
-			4'h1:	calcALUResult = d0 ^ d1;
-			4'h2:	calcALUResult = d0 & d1;
-			//
-			4'h4:	calcALUResult = d0 + d1;
-			4'h5:	calcALUResult = d0 - d1;
-			4'h8:	calcALUResult = d0 << d1;
-			4'h9:	calcALUResult = d0 >>> d1;
-			default:	calcALUResult = 0;
-		endcase
+		if(iscmp == 0) begin
+			case (op)
+				4'h0:	calcALUResult = d0 | d1;
+				4'h1:	calcALUResult = d0 ^ d1;
+				4'h2:	calcALUResult = d0 & d1;
+				//
+				4'h4:	calcALUResult = d0 + d1;
+				4'h5:	calcALUResult = d0 - d1;
+				4'h8:	calcALUResult = d0 << d1;
+				4'h9:	calcALUResult = d0 >>> d1;
+				default:	calcALUResult = 0;
+			endcase
+		end
+		else begin
+			case (op)
+				4'h0:	calcALUResult = d0 == d1;
+				4'h1:	calcALUResult = d0 != d1;
+				4'h2:	calcALUResult = d0 < d1;
+				4'h3:	calcALUResult = d0 >= d1;
+				4'h4:	calcALUResult = d0 <= d1;
+				4'h5:	calcALUResult = d0 > d1;
+				4'h6:	calcALUResult = (d0 & d1) == 0;
+				4'h7:	calcALUResult = (d0 & d1) != 0;
+				default:	calcALUResult = 0;
+			endcase
+		end
 	endfunction
 	
 endmodule

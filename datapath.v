@@ -2,7 +2,7 @@
 `include "def.v"
 module DataPath(
 	instr0, instr1, current_state,
-	alu_d0, alu_d1, alu_dout, alu_op,
+	alu_d0, alu_d1, alu_dout, alu_op, alu_iscmp,
 	ireg_r0, ireg_r1, ireg_rw, ireg_we,
 	ireg_d0, ireg_d1, ireg_dw);
 	//
@@ -14,6 +14,7 @@ module DataPath(
 	//
 	output reg [31:0] alu_d0, alu_d1;
 	output reg [3:0] alu_op = 0;
+	output reg alu_iscmp = 0;
 	output reg [5:0] ireg_r0, ireg_r1, ireg_rw;
 	output reg ireg_we;
 	output reg [31:0] ireg_dw;
@@ -32,6 +33,7 @@ module DataPath(
 					`OP_LBSET: begin
 						alu_d0 = 0;
 						alu_d1 = 0;
+						alu_iscmp = 0;
 						ireg_r0 = 0;
 						ireg_r1 = 0;
 						ireg_rw = instr0_operand0;
@@ -41,6 +43,7 @@ module DataPath(
 					`OP_LIMM16: begin
 						alu_d0 = 0;
 						alu_d1 = 0;
+						alu_iscmp = 0;
 						ireg_r0 = 0;
 						ireg_r1 = 0;
 						ireg_rw = instr0_operand0;
@@ -50,6 +53,7 @@ module DataPath(
 					`OP_CP: begin
 						alu_d0 = 0;
 						alu_d1 = 0;
+						alu_iscmp = 0;
 						ireg_r0 = instr0_operand1;
 						ireg_r1 = 0;
 						ireg_rw = instr0_operand0;
@@ -60,9 +64,9 @@ module DataPath(
 						`OP_ADD, `OP_SUB, 
 						`OP_SHL, `OP_SAR 
 						: begin
-						// OR, XOR, AND, ADD, SUB, SHL, SAR
 						alu_d0 = ireg_d0;
 						alu_d1 = ireg_d1;
+						alu_iscmp = 0;
 						ireg_r0 = instr0_operand1;
 						ireg_r1 = instr0_operand2;
 						ireg_rw = instr0_operand0;
@@ -71,9 +75,26 @@ module DataPath(
 						//
 						alu_op = instr0_op[3:0];
 					end
+					`OP_CMPE, `OP_CMPNE, 
+						`OP_CMPL, `OP_CMPGE, 
+						`OP_CMPLE, `OP_CMPG,
+						`OP_TSTZ, `OP_TSTNZ
+						: begin
+						alu_d0 = ireg_d0;
+						alu_d1 = ireg_d1;
+						alu_iscmp = 1;
+						ireg_r0 = instr0_operand1;
+						ireg_r1 = instr0_operand2;
+						ireg_rw = instr0_operand0;
+						ireg_dw = alu_dout;
+						ireg_we = 1;
+						//
+						alu_op = {1'b0, instr0_op[2:0]};
+					end
 					`OP_LIMM32: begin
 						alu_d0 = 0;
 						alu_d1 = 0;
+						alu_iscmp = 0;
 						ireg_r0 = 0;
 						ireg_r1 = 0;
 						ireg_rw = instr0_operand0;
@@ -83,6 +104,7 @@ module DataPath(
 					`OP_CPDR: begin // CPDR
 						alu_d0 = 0;
 						alu_d1 = 0;
+						alu_iscmp = 0;
 						ireg_r0 = instr0_operand1;
 						ireg_r1 = 0;
 						ireg_rw = 0;
@@ -92,6 +114,7 @@ module DataPath(
 					default: begin
 						alu_d0 = 0;
 						alu_d1 = 0;
+						alu_iscmp = 0;
 						ireg_r0 = 0;
 						ireg_r1 = 0;
 						ireg_rw = 0;
@@ -103,6 +126,7 @@ module DataPath(
 			default: begin
 				alu_d0 = 0;
 				alu_d1 = 0;
+				alu_iscmp = 0;
 				ireg_r0 = 0;
 				ireg_r1 = 0;
 				ireg_rw = 0;
