@@ -1,27 +1,6 @@
 `timescale 1ns / 1ps
 
 module LabelTable(clk, lbid, lbidw, typ, typw, base, basew, count, countw, we);
-	/*
-	typ(8bit):
-		0x00	Undefined
-		0x01	VPtr
-		0x02	SINT8
-		0x03	UINT8
-		0x04	SINT16
-		0x05	UINT16
-		0x06	SINT32
-		0x07	(UINT32)
-		0x08	SINT4
-		0x09	UINT4
-		0x0A	SINT2
-		0x0B	UINT2
-		0x0C	SINT1
-		0x0D	UINT1
-		0x86  	Code   
-	LBID(12bit)
-	base(16bit)
-	count(16bit)	
-	*/
 	input clk, we;
 	input [11:0] lbid, lbidw;
 	output [7:0] typ;

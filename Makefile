@@ -9,10 +9,10 @@ TOP_SRCS=top.v $(COMMON_SRCS)
 .PHONY: run test
 
 testbench.out : $(TEST_SRCS) rom.hex Makefile
-	iverilog -Wtimescale -o $*.out -s testbench $(TEST_SRCS)
+	iverilog -Wall -o $*.out -s testbench $(TEST_SRCS)
 
 check:
-	iverilog -Wtimescale -o check.out -s check check.v
+	iverilog -Wall -o check.out -s check check.v
 	vvp check.out
 
 clean:
@@ -31,7 +31,11 @@ test_addrdec :
 	make memctrl.vcd
 
 %.out : %.v Makefile
-	iverilog -o $*.out -s testbench_$* $*.v
+	iverilog -Wall -o $*.out -s testbench_$* $*.v
+
+MMU_SRCS=mmu.v labeltable.v addrdec.v
+mmu.out : $(MMU_SRCS) Makefile
+	iverilog -Wall -o mmu.out -s testbench_mmu $(MMU_SRCS)
 
 %.vcd : %.out Makefile
 	vvp $*.out
