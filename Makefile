@@ -30,6 +30,10 @@ test:
 	-rm testbench.vcd
 	make testbench.vcd
 
+vcd:
+	make test
+	open testbench.vcd
+
 test_addrdec :
 	make addrdec.vcd
 test_mmu :

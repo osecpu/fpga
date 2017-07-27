@@ -65,7 +65,11 @@ module OSECPU(clk, reset, dr, cr, pc);
 		alu_d0, alu_d1, alu_dout, alu_op, alu_iscmp,
 		ireg_r0, ireg_r1, ireg_rw, ireg_we,
 		ireg_d0, ireg_d1, ireg_dw,
-		lbt_lbidw, lbt_typw, lbt_basew, lbt_countw, lbt_we);
+		lbt_lbidw, lbt_typw, lbt_basew, lbt_countw, lbt_we,
+		preg_p0, preg_p1, preg_pw,
+		preg_lbid0, preg_lbid1, preg_lbidw, 
+		preg_ofs0, preg_ofs1, preg_ofsw, 
+		preg_we);
 	
 	wire [7:0] instr0_op;
 	assign instr0_op       	= instr0[31:24];

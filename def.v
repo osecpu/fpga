@@ -5,10 +5,37 @@
 `define BIT_CR_HLT		0
 
 //
+// ALU OPs
+//
+`define ALU_OP_OR		4'h0
+`define ALU_OP_XOR		4'h1
+`define ALU_OP_AND		4'h2
+`define ALU_OP_ADD		4'h4
+`define ALU_OP_SUB		4'h5
+//`define ALU_OP_MUL		4'h6
+`define ALU_OP_SHL		4'h8
+`define ALU_OP_SAR		4'h9
+//`define ALU_OP_DIV		4'hA
+//`define ALU_OP_MOD		4'hB
+
+`define ALU_CC_E		4'h0
+`define ALU_CC_NE		4'h1
+`define ALU_CC_L		4'h2
+`define ALU_CC_GE		4'h3
+`define ALU_CC_LE		4'h4
+`define ALU_CC_G		4'h5
+`define ALU_CC_TSTZ		4'h6
+`define ALU_CC_TSTNZ	4'h7
+
+//
 // OPs
 //
 `define OP_LBSET		8'h01
 `define OP_LIMM16		8'h02
+`define OP_PLIMM		8'h03
+
+`define OP_PADD			8'h0e
+`define OP_PDIF			8'h0f
 
 `define OP_OR			8'h10
 `define OP_XOR			8'h11

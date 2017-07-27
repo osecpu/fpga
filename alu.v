@@ -11,28 +11,28 @@ module ALUController(d0, d1, dout, op, iscmp);
 	function signed [31:0] calcALUResult(input [3:0] op, input signed [31:0] d0, input signed [31:0] d1);
 		if(iscmp == 0) begin
 			case (op)
-				4'h0:	calcALUResult = d0 | d1;
-				4'h1:	calcALUResult = d0 ^ d1;
-				4'h2:	calcALUResult = d0 & d1;
+				`ALU_OP_OR:		calcALUResult = d0 | d1;
+				`ALU_OP_XOR:	calcALUResult = d0 ^ d1;
+				`ALU_OP_AND:	calcALUResult = d0 & d1;
 				//
-				4'h4:	calcALUResult = d0 + d1;
-				4'h5:	calcALUResult = d0 - d1;
-				4'h8:	calcALUResult = d0 << d1;
-				4'h9:	calcALUResult = d0 >>> d1;
-				default:	calcALUResult = 0;
+				`ALU_OP_ADD:	calcALUResult = d0 + d1;
+				`ALU_OP_SUB:	calcALUResult = d0 - d1;
+				`ALU_OP_SHL:	calcALUResult = d0 << d1;
+				`ALU_OP_SAR:	calcALUResult = d0 >>> d1;
+				default:		calcALUResult = 0;
 			endcase
 		end
 		else begin
 			case (op)
-				4'h0:	calcALUResult = d0 == d1;
-				4'h1:	calcALUResult = d0 != d1;
-				4'h2:	calcALUResult = d0 < d1;
-				4'h3:	calcALUResult = d0 >= d1;
-				4'h4:	calcALUResult = d0 <= d1;
-				4'h5:	calcALUResult = d0 > d1;
-				4'h6:	calcALUResult = (d0 & d1) == 0;
-				4'h7:	calcALUResult = (d0 & d1) != 0;
-				default:	calcALUResult = 0;
+				`ALU_CC_E:		calcALUResult = d0 == d1;
+				`ALU_CC_NE:		calcALUResult = d0 != d1;
+				`ALU_CC_L:		calcALUResult = d0 < d1;
+				`ALU_CC_GE:		calcALUResult = d0 >= d1;
+				`ALU_CC_LE:		calcALUResult = d0 <= d1;
+				`ALU_CC_G:		calcALUResult = d0 > d1;
+				`ALU_CC_TSTZ:	calcALUResult = (d0 & d1) == 0;
+				`ALU_CC_TSTNZ:	calcALUResult = (d0 & d1) != 0;
+				default:		calcALUResult = 0;
 			endcase
 		end
 	endfunction
