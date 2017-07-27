@@ -55,6 +55,13 @@
 `define OP_CMPG			8'h25
 `define OP_TSTZ			8'h26
 `define OP_TSTNZ		8'h27
+//
+`define OP_PCMPE		8'h28
+`define OP_PCMPNE		8'h29
+`define OP_PCMPL		8'h2a
+`define OP_PCMPGE		8'h2b
+`define OP_PCMPLE		8'h2c
+`define OP_PCMPG		8'h2d
 
 `define OP_LIMM32		8'hd0
 

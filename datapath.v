@@ -83,6 +83,14 @@ module DataPath(
 						alu_iscmp = 0;
 						alu_op = `ALU_OP_SUB;
 					end
+					`OP_PCMPE, `OP_PCMPNE,
+						`OP_PCMPL, `OP_PCMPGE,
+						`OP_PCMPLE, `OP_PCMPG : begin
+						alu_d0 = preg_ofs0;
+						alu_d1 = preg_ofs1;
+						alu_iscmp = 1;
+						alu_op = {1'b0, instr0_op[2:0]};
+					end
 					default: begin
 						alu_d0 = 0;
 						alu_d1 = 0;
@@ -134,7 +142,11 @@ module DataPath(
 						preg_p0 = instr0_operand2;
 						preg_p1 = 0;
 					end
-					`OP_PDIF: begin
+					`OP_PDIF,
+						`OP_PCMPE, `OP_PCMPNE,
+						`OP_PCMPL, `OP_PCMPGE,
+						`OP_PCMPLE, `OP_PCMPG
+						: begin
 						preg_p0 = instr0_operand1;
 						preg_p1 = instr0_operand2;
 					end
@@ -236,7 +248,10 @@ module DataPath(
 						`OP_CMPL, `OP_CMPGE, 
 						`OP_CMPLE, `OP_CMPG,
 						`OP_TSTZ, `OP_TSTNZ,
-						`OP_PDIF
+						`OP_PDIF,
+						`OP_PCMPE, `OP_PCMPNE,
+						`OP_PCMPL, `OP_PCMPGE,
+						`OP_PCMPLE, `OP_PCMPG
 						: begin
 						ireg_rw = instr0_operand0;
 						ireg_dw = alu_dout;
