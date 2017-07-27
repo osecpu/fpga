@@ -6,7 +6,7 @@ module IntegerRegister(clk, r0, r1, rw, d0, d1, dw, we);
 	input [31:0] dw;
 	output [31:0] d0, d1;
 
-	reg [31:0] iregfile[5:0];	// 左が要素の幅、右がアドレスの幅
+	reg [31:0] iregfile[63:0];	// 左が要素の幅、右が添字範囲
 
 	assign d0 = iregfile[r0];
 	assign d1 = iregfile[r1];

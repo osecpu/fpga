@@ -10,9 +10,9 @@ module LabelTable(clk, lbid, lbidw, typ, typw, base, basew, count, countw, we);
 	output [15:0] count;
 	input [15:0] countw;
 	//
-	reg [5:0] typefile[12:0];	// 左が要素の幅、右がアドレスの幅
-	reg [15:0] basefile[12:0];	// 左が要素の幅、右がアドレスの幅
-	reg [15:0] countfile[12:0];	// 左が要素の幅、右がアドレスの幅
+	reg [5:0] typefile[4095:0];	// 左が要素の幅、右が添字範囲
+	reg [15:0] basefile[4095:0];
+	reg [15:0] countfile[4095:0];
 
 	assign typ = typefile[lbid];
 	assign base = basefile[lbid];

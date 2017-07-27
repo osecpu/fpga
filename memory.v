@@ -7,7 +7,7 @@ module Memory(clk, addr, data, wdata, we);
 	input [31:0]wdata;
 	output [31:0]data;
 
-	reg [31:0] rom[15:0];	// 左が要素の幅、右がアドレスの幅
+	reg [31:0] rom[4095:0];	// 左が要素の幅、右がアドレスの範囲（ビット幅ではない!）
 
 	assign data = rom[addr];
 
