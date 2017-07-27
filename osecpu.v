@@ -43,7 +43,7 @@ module OSECPU(clk, reset, dr, cr, pc);
 	wire [15:0] pc;
 	//
 	Controller ctrl(clk, reset, 
-		mem_data, mem_addr, 
+		mem_data, mem_addr, ireg_d0[0], 
 		instr0, instr1, current_state, 
 		cr, pc);
 	ALUController alu(alu_d0, alu_d1, alu_dout, alu_op, alu_iscmp);

@@ -139,6 +139,10 @@ module DataPath(
 			`STATE_EXEC: begin
 				case (instr0_op)
 					`OP_PADD: begin
+						preg_p0 = instr0_operand0;
+						preg_p1 = 0;
+					end
+					`OP_PADD: begin
 						preg_p0 = instr0_operand2;
 						preg_p1 = 0;
 					end
@@ -196,7 +200,7 @@ module DataPath(
 		case (current_state)
 			`STATE_EXEC: begin
 				case (instr0_op)
-					`OP_PADD: begin
+					`OP_PADD, `OP_CND: begin
 						ireg_r0 = instr0_operand0;
 						ireg_r1 = 0;
 					end

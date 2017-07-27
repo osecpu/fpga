@@ -10,6 +10,8 @@ module testbench();
 	wire [15:0] osecpu_pc;
 	wire [7:0] osecpu_cr;
 	//
+	reg [31:0] counter = 0;
+	//
 	OSECPU osecpu(clk, reset, osecpu_dr, osecpu_cr, osecpu_pc);
 
 	initial begin
@@ -28,6 +30,7 @@ module testbench();
 	end
 
 	always @(posedge clk) begin
+		counter = counter + 1;
 		if(osecpu_cr[`BIT_CR_HLT]) begin
 			$display ("DR: 0x%x = %d", osecpu_dr, osecpu_dr);
 			/*
@@ -38,6 +41,10 @@ module testbench();
 				$display ("%x", osecpu_dr);
 			end
 			*/
+			$finish;
+		end
+		if(counter >= 100) begin
+			$display ("aborted due to counter value");
 			$finish;
 		end
 	end

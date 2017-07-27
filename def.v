@@ -3,6 +3,7 @@
 `define STATE_EXEC		4'd3
 
 `define BIT_CR_HLT		0
+`define BIT_CR_SKIP		1
 
 //
 // ALU OPs
@@ -33,6 +34,7 @@
 `define OP_LBSET		8'h01
 `define OP_LIMM16		8'h02
 `define OP_PLIMM		8'h03
+`define OP_CND			8'h04
 
 `define OP_PADD			8'h0e
 `define OP_PDIF			8'h0f
