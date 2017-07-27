@@ -6,7 +6,7 @@ module testbench();
 	reg [3:0] segsel;
 	//
 	reg clk, reset;
-	wire [31:0] osecpu_dr;
+	wire signed [31:0] osecpu_dr;
 	wire [15:0] osecpu_pc;
 	wire [7:0] osecpu_cr;
 	//
@@ -29,12 +29,15 @@ module testbench();
 
 	always @(posedge clk) begin
 		if(osecpu_cr[`BIT_CR_HLT]) begin
+			$display ("DR: 0x%x = %d", osecpu_dr, osecpu_dr);
+			/*
 			if(osecpu_dr == -4)
 				$display ("Simulation PASS");
 			else begin 
 				$display ("Simulation **** FAILED ****");
 				$display ("%x", osecpu_dr);
 			end
+			*/
 			$finish;
 		end
 	end

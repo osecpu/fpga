@@ -48,84 +48,6 @@ module DataPath(
 
 	//
 	always begin
-		// LabelTable write
-		case (current_state)
-			`STATE_EXEC: begin
-				case (instr0_op)
-					`OP_LBSET: begin
-						lbt_lbidw = instr0_imm16;
-						lbt_typw = instr0_operand0;
-						lbt_basew = instr1_base;
-						lbt_countw = instr1_count;
-						lbt_we = 1;
-					end
-					default: begin
-						lbt_lbidw = 0;
-						lbt_typw = 0;
-						lbt_basew = 0;
-						lbt_countw = 0;
-						lbt_we = 0;
-					end
-				endcase
-			end
-			default: begin
-				lbt_lbidw = 0;
-				lbt_typw = 0;
-				lbt_basew = 0;
-				lbt_countw = 0;
-				lbt_we = 0;
-			end
-		endcase
-		// PReg W
-		case (current_state)
-			`STATE_EXEC: begin
-				case (instr0_op)
-					`OP_PLIMM: begin
-						preg_pw = instr0_operand0;
-						preg_lbidw = instr0_imm16;
-						preg_ofsw = 0;
-						preg_we = 1;
-					end
-					`OP_PADD: begin
-						preg_pw = instr0_operand1;
-						preg_lbidw = preg_lbid0;
-						preg_ofsw = alu_dout;
-						preg_we = 1;
-					end
-					default: begin
-						preg_pw = 0;
-						preg_lbidw = 0;
-						preg_ofsw = 0;
-						preg_we = 0;
-					end
-				endcase
-			end
-			default: begin
-				preg_pw = 0;
-				preg_lbidw = 0;
-				preg_ofsw = 0;
-				preg_we = 0;
-			end
-		endcase
-		// PReg R
-		case (current_state)
-			`STATE_EXEC: begin
-				case (instr0_op)
-					`OP_PADD: begin
-						preg_p0 = instr0_operand2;
-						preg_p1 = 0;
-					end
-					default: begin
-						preg_p0 = 0;
-						preg_p1 = 0;
-					end
-				endcase
-			end
-			default: begin
-				preg_p0 = 0;
-				preg_p1 = 0;
-			end
-		endcase
 		// ALU
 		case (current_state)
 			`STATE_EXEC: begin
@@ -174,6 +96,88 @@ module DataPath(
 				alu_d1 = 0;
 				alu_iscmp = 0;
 				alu_op = 0;
+			end
+		endcase
+		// LabelTable write
+		case (current_state)
+			`STATE_EXEC: begin
+				case (instr0_op)
+					`OP_LBSET: begin
+						lbt_lbidw = instr0_imm16;
+						lbt_typw = instr0_operand0;
+						lbt_basew = instr1_base;
+						lbt_countw = instr1_count;
+						lbt_we = 1;
+					end
+					default: begin
+						lbt_lbidw = 0;
+						lbt_typw = 0;
+						lbt_basew = 0;
+						lbt_countw = 0;
+						lbt_we = 0;
+					end
+				endcase
+			end
+			default: begin
+				lbt_lbidw = 0;
+				lbt_typw = 0;
+				lbt_basew = 0;
+				lbt_countw = 0;
+				lbt_we = 0;
+			end
+		endcase
+		// PReg R
+		case (current_state)
+			`STATE_EXEC: begin
+				case (instr0_op)
+					`OP_PADD: begin
+						preg_p0 = instr0_operand2;
+						preg_p1 = 0;
+					end
+					`OP_PDIF: begin
+						preg_p0 = instr0_operand1;
+						preg_p1 = instr0_operand2;
+					end
+					default: begin
+						preg_p0 = 0;
+						preg_p1 = 0;
+					end
+				endcase
+			end
+			default: begin
+				preg_p0 = 0;
+				preg_p1 = 0;
+			end
+		endcase
+		// PReg W
+		case (current_state)
+			`STATE_EXEC: begin
+				case (instr0_op)
+					`OP_PLIMM: begin
+						preg_pw = instr0_operand0;
+						preg_lbidw = instr0_imm16;
+						preg_ofsw = 0;
+						preg_we = 1;
+					end
+					`OP_PADD: begin
+						preg_pw = instr0_operand1;
+						preg_lbidw = preg_lbid0;
+						preg_ofsw = alu_dout;
+						preg_we = 1;
+					end
+					default: begin
+						preg_pw = 0;
+						preg_lbidw = 0;
+						preg_ofsw = 0;
+						preg_we = 0;
+					end
+				endcase
+			end
+			default: begin
+				preg_pw = 0;
+				preg_lbidw = 0;
+				preg_ofsw = 0;
+				preg_we = 0;
 			end
 		endcase
 		// IReg R
@@ -231,7 +235,8 @@ module DataPath(
 						`OP_CMPE, `OP_CMPNE, 
 						`OP_CMPL, `OP_CMPGE, 
 						`OP_CMPLE, `OP_CMPG,
-						`OP_TSTZ, `OP_TSTNZ
+						`OP_TSTZ, `OP_TSTNZ,
+						`OP_PDIF
 						: begin
 						ireg_rw = instr0_operand0;
 						ireg_dw = alu_dout;
