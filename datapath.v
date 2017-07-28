@@ -9,7 +9,8 @@ module DataPath(
 	preg_p0, preg_p1, preg_pw,
 	preg_lbid0, preg_lbid1, preg_lbidw,
 	preg_ofs0, preg_ofs1, preg_ofsw,
-	preg_we);
+	preg_we,
+	mmu_reqType, mmu_ofs, mmu_lbid, mmu_addr, mmu_invalid);
 	//
 	input [31:0] instr0;
 	input [31:0] instr1;
@@ -18,6 +19,8 @@ module DataPath(
 	input [31:0] ireg_d0, ireg_d1;
 	input [11:0] preg_lbid0, preg_lbid1;
 	input [15:0] preg_ofs0, preg_ofs1;
+	input [15:0] mmu_addr;
+	input        mmu_invalid;
 	//
 	output reg [31:0] alu_d0, alu_d1;
 	output reg [ 3:0] alu_op = 0;
@@ -34,6 +37,9 @@ module DataPath(
 	output reg [11:0] preg_lbidw;
 	output reg [15:0] preg_ofsw;
 	output reg        preg_we;
+	output reg [ 5:0] mmu_reqType;
+	output reg [15:0] mmu_ofs;
+	output reg [11:0] mmu_lbid;
 	//
 	wire [5:0]  instr0_operand0	 = instr0[23:18];
 	wire [5:0]  instr0_operand1	 = instr0[17:12];
@@ -48,6 +54,29 @@ module DataPath(
 
 	//
 	always begin
+		// MMU
+		case (current_state)
+			`STATE_EXEC: begin
+				case (instr0_op)
+					`OP_PLIMM : begin
+						mmu_reqType = `LBTYPE_CODE;
+						mmu_ofs = preg_ofsw;
+						mmu_lbid = preg_lbidw;
+					end
+					default: begin
+						mmu_reqType = 0;
+						mmu_ofs = 0;
+						mmu_lbid = 0;
+					end
+				endcase
+			end
+			default: begin
+				mmu_reqType = 0;
+				mmu_ofs = 0;
+				mmu_lbid = 0;
+			end
+		endcase
+
 		// ALU
 		case (current_state)
 			`STATE_EXEC: begin

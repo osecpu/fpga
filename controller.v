@@ -3,11 +3,14 @@
 module Controller(clk, reset, 
 	memdata, memaddr, ireg_d0_lsb, 
 	instr0, instr1, current_state, 
-	cr, pc);
+	cr, pc,
+	pc_update_req, pc_update_addr);
 	//
 	input clk, reset;
 	input [31:0] memdata;
 	input ireg_d0_lsb;
+	input pc_update_req;
+	input [15:0] pc_update_addr;
 	output reg [15:0] memaddr;
 	output reg [31:0] instr0 = 0;
 	output reg [31:0] instr1 = 0;
@@ -15,12 +18,20 @@ module Controller(clk, reset,
 	output reg [7:0] cr = 0;
 	output reg [15:0] pc = 0;
 	//
-	wire	[15:0] pc_next;
+	reg		[15:0] pc_next;
 	wire    [ 7:0] cr_next;
 	wire	[3:0]	next_state;
-	assign pc_next = (
-		current_state == `STATE_FETCH0 || 
-		current_state == `STATE_FETCH1 ? pc + 1'b1 : pc);
+	always begin
+		case (current_state)
+			`STATE_FETCH0, `STATE_FETCH1: pc_next = pc + 1;
+			`STATE_EXEC: begin
+				if(pc_update_req) pc_next = pc_update_addr;
+				else pc_next = pc;
+			end
+			default: pc_next = pc;
+		endcase
+		#1;
+	end
 	//
 	wire [7:0] instr0_op;
 	wire [7:0] next_instr0_op;

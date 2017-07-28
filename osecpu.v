@@ -18,7 +18,7 @@ module OSECPU(clk, reset, dr, cr, pc);
 	wire [5:0] preg_p0, preg_p1, preg_pw;
 	wire [11:0] preg_lbid0, preg_lbid1, preg_lbidw;
 	wire [15:0] preg_ofs0, preg_ofs1, preg_ofsw;
-	wire preg_we;
+	wire preg_we, preg_pc_update_req;
 	//
 	wire [ 5:0] mmu_reqType;
 	wire [15:0] mmu_ofs;
@@ -45,7 +45,8 @@ module OSECPU(clk, reset, dr, cr, pc);
 	Controller ctrl(clk, reset, 
 		mem_data, mem_addr, ireg_d0[0], 
 		instr0, instr1, current_state, 
-		cr, pc);
+		cr, pc,
+		preg_pc_update_req, mmu_addr);
 	ALUController alu(alu_d0, alu_d1, alu_dout, alu_op, alu_iscmp);
 	IntegerRegister ireg(clk, 
 		ireg_r0, ireg_r1, ireg_rw, 
@@ -55,7 +56,7 @@ module OSECPU(clk, reset, dr, cr, pc);
 		preg_p0, preg_p1, preg_pw, 
 		preg_lbid0, preg_lbid1, preg_lbidw, 
 		preg_ofs0, preg_ofs1, preg_ofsw, 
-		preg_we);
+		preg_we, preg_pc_update_req);
 	MMU mmu(clk,
 		mmu_reqType, mmu_ofs, mmu_lbid, mmu_addr, mmu_invalid,
 		lbt_lbidw, lbt_typw, lbt_basew, lbt_countw, lbt_we);
@@ -69,7 +70,8 @@ module OSECPU(clk, reset, dr, cr, pc);
 		preg_p0, preg_p1, preg_pw,
 		preg_lbid0, preg_lbid1, preg_lbidw, 
 		preg_ofs0, preg_ofs1, preg_ofsw, 
-		preg_we);
+		preg_we,
+		mmu_reqType, mmu_ofs, mmu_lbid, mmu_addr, mmu_invalid);
 	
 	wire [7:0] instr0_op;
 	assign instr0_op       	= instr0[31:24];

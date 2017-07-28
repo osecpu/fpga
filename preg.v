@@ -1,12 +1,17 @@
 `timescale 1ns / 1ps
 
-module PointerRegister(clk, p0, p1, pw, lbid0, lbid1, lbidw, ofs0, ofs1, ofsw, we);
+module PointerRegister(clk, 
+	p0, p1, pw, 
+	lbid0, lbid1, lbidw, 
+	ofs0, ofs1, ofsw, 
+	we, pc_update_req);
 	input clk, we;
 	input [5:0] p0, p1, pw;
 	output [11:0] lbid0, lbid1;
 	input [11:0] lbidw;
 	output [15:0] ofs0, ofs1;
 	input [15:0] ofsw;
+	output pc_update_req;
 
 	reg [11:0] lbidfile[63:0];	// 左が要素の幅、右が添字範囲
 	reg [15:0] ofsfile[63:0];
@@ -16,6 +21,8 @@ module PointerRegister(clk, p0, p1, pw, lbid0, lbid1, lbidw, ofs0, ofs1, ofsw, w
 
 	assign ofs0 = ofsfile[p0];
 	assign ofs1 = ofsfile[p1];
+
+	assign pc_update_req = (we == 1 && pw == 6'h3f) ? 1 : 0;
 
 	always @ (posedge clk)
 		begin
