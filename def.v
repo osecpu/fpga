@@ -49,6 +49,8 @@
 `define OP_SHL			8'h18
 `define OP_SAR			8'h19
 
+`define OP_PCP			8'h1e
+
 `define OP_CMPE			8'h20
 `define OP_CMPNE		8'h21
 `define OP_CMPL			8'h22

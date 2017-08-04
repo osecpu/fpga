@@ -63,6 +63,12 @@ module DataPath(
 						mmu_ofs = preg_ofsw;
 						mmu_lbid = preg_lbidw;
 					end
+					`OP_PCP : begin
+						mmu_reqType =
+							(preg_p0 == 6'h3f ? `LBTYPE_CODE: `LBTYPE_UNDEFINED);
+						mmu_ofs = preg_ofs0;
+						mmu_lbid = preg_lbid0;
+					end
 					default: begin
 						mmu_reqType = 0;
 						mmu_ofs = 0;
@@ -171,7 +177,7 @@ module DataPath(
 						preg_p0 = instr0_operand0;
 						preg_p1 = 0;
 					end
-					`OP_PADD: begin
+					`OP_PADD, `OP_PCP: begin
 						preg_p0 = instr0_operand2;
 						preg_p1 = 0;
 					end
@@ -208,6 +214,12 @@ module DataPath(
 						preg_pw = instr0_operand1;
 						preg_lbidw = preg_lbid0;
 						preg_ofsw = alu_dout;
+						preg_we = 1;
+					end
+					`OP_PCP: begin
+						preg_pw = instr0_operand1;
+						preg_lbidw = preg_lbid0;
+						preg_ofsw = preg_ofs0;
 						preg_we = 1;
 					end
 					default: begin
