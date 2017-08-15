@@ -12,7 +12,7 @@ default:
 
 
 i: $(SRCS) Makefile
-	iverilog -Wall -o $(TOPMODULE).out -s $(TOPMODULE) $(SRCS)
+	iverilog -Wall -s OSECPU -o $(TOPMODULE).out  $(SRCS)
 
 vcd: $(SRCS) testbench.v Makefile
 	iverilog -Wall -o testbench.out -s testbench $(SRCS) testbench.v
