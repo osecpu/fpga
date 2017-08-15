@@ -1,6 +1,6 @@
 SRCS=osecpu.v \
 	alu.v ireg.v preg.v labeltable.v \
-	led7seg.v memory.v datapath.v controller.v \
+	led7seg.v datapath.v controller.v \
 	mmu.v addrdec.v blockram.v
 TOPMODULE=osecpu
 

@@ -73,17 +73,13 @@ module Controller(clk, reset,
 	//
 	always begin
 		case (current_state)
-			`STATE_FETCH0_0, `STATE_FETCH0_1:	memaddr = pc;
-			`STATE_FETCH1_0, `STATE_FETCH1_1:	memaddr = pc;
-			default:			memaddr = 0;
+			`STATE_FETCH0_0, `STATE_FETCH0_1:	memaddr <= pc;
+			`STATE_FETCH1_0, `STATE_FETCH1_1:	memaddr <= pc;
+			default:			memaddr <= 0;
 		endcase
 		#1;
 	end
 
-	function genCRNextHLT(input [3:0]cstate, input[7:0] op);
-		genCRNextHLT = (cstate == `STATE_EXEC && op == `OP_HLT);
-	endfunction
-	
 	always @(negedge clk) begin
 		if(reset == 0 && cr[`BIT_CR_HLT] == 0) begin
 			if(current_state == `STATE_FETCH0_1) begin
