@@ -73,8 +73,8 @@ module Controller(clk, reset,
 	//
 	always begin
 		case (current_state)
-			`STATE_FETCH0_0:	memaddr = pc;
-			`STATE_FETCH1_0:	memaddr = pc;
+			`STATE_FETCH0_0, `STATE_FETCH0_1:	memaddr = pc;
+			`STATE_FETCH1_0, `STATE_FETCH1_1:	memaddr = pc;
 			default:			memaddr = 0;
 		endcase
 		#1;
@@ -84,6 +84,17 @@ module Controller(clk, reset,
 		genCRNextHLT = (cstate == `STATE_EXEC && op == `OP_HLT);
 	endfunction
 	
+	always @(negedge clk) begin
+		if(reset == 0 && cr[`BIT_CR_HLT] == 0) begin
+			if(current_state == `STATE_FETCH0_1) begin
+				instr0 <= memdata;
+			end
+			if(current_state == `STATE_FETCH1_1) begin
+				instr1 <= memdata;
+			end
+		end
+	end
+
 	always @(posedge clk) begin
 		if(reset == 1) begin
 			pc = 0;
@@ -91,12 +102,6 @@ module Controller(clk, reset,
 			cr = 0;
 		end
 		if(reset == 0 && cr[`BIT_CR_HLT] == 0) begin
-			if(current_state == `STATE_FETCH0_1) begin
-				instr0 = memdata;
-			end
-			if(current_state == `STATE_FETCH1_1) begin
-				instr1 = memdata;
-			end
 			current_state <= next_state;
 			pc <= pc_next;
 			cr <= cr_next;
@@ -122,9 +127,9 @@ module Controller(clk, reset,
 				endcase
 			end
 			`STATE_FETCH1_0:
-					next_state = `STATE_FETCH0_1;
+					next_state = `STATE_FETCH1_1;
 			`STATE_FETCH1_1: begin
-				if(cr[`BIT_CR_SKIP] == 1)
+				if(cr[`BIT_CR_SKIP])
 					next_state = `STATE_FETCH0_0;
 				else
 					next_state = `STATE_EXEC;
