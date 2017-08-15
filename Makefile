@@ -4,9 +4,16 @@ COMMON_SRCS=osecpu.v \
 
 TEST_SRCS=testbench.v $(COMMON_SRCS)
 TOP_SRCS=top.v $(COMMON_SRCS)
-
+TOPMODULE=osecpu
 
 .PHONY: run test
+
+DIR_QBIN=~/intelFPGA_lite/17.0/quartus/bin
+
+default:
+	$(DIR_QBIN)/quartus_map osecpu
+	$(DIR_QBIN)/quartus_fit osecpu
+	$(DIR_QBIN)/quartus_asm osecpu
 
 testbench.out : $(TEST_SRCS) rom.hex Makefile
 	iverilog -Wall -o $*.out -s testbench $(TEST_SRCS)
@@ -52,3 +59,10 @@ mmu.out : $(MMU_SRCS) Makefile
 reset_blaster :
 	-killall jtagd
 	sudo ~/intelFPGA_lite/17.0/quartus/bin/jtagd
+
+install:
+	$(DIR_QBIN)/quartus_pgm -c 1 -m jtag -o P\;$(TOPMODULE).sof@1
+
+resetpgm:
+	-killall jtagd
+	sudo $(DIR_QBIN)/jtagd
