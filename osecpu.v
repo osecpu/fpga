@@ -60,7 +60,10 @@ module OSECPU(clk, reset, dr, cr, pc);
 	MMU mmu(clk,
 		mmu_reqType, mmu_ofs, mmu_lbid, mmu_addr, mmu_invalid,
 		lbt_lbidw, lbt_typw, lbt_basew, lbt_countw, lbt_we);
-	Memory mem(clk, mem_addr, mem_data, mem_wdata, mem_we);
+	BlockRAM mem(clk, mem_addr, mem_wdata, mem_we, mem_data);
+	defparam mem.DataWidth = 32;
+	defparam mem.AddrWidth = 8;
+	defparam mem.InitFileName = "rom.hex";
 	DataPath datapath(
 		instr0, instr1, current_state,
 		alu_d0, alu_d1, alu_dout, alu_op, alu_iscmp,

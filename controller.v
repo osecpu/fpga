@@ -20,10 +20,10 @@ module Controller(clk, reset,
 	//
 	reg		[15:0] pc_next;
 	wire    [ 7:0] cr_next;
-	wire	[3:0]	next_state;
+	reg		[ 3:0] next_state;
 	always begin
 		case (current_state)
-			`STATE_FETCH0, `STATE_FETCH1: pc_next = pc + 1;
+			`STATE_FETCH0_0, `STATE_FETCH1_0: pc_next = pc + 1;
 			`STATE_EXEC: begin
 				if(pc_update_req) pc_next = pc_update_addr;
 				else pc_next = pc;
@@ -49,7 +49,7 @@ module Controller(clk, reset,
 		else cr_next_hlt = cr[`BIT_CR_HLT];
 		// SKIP bit
 		case (current_state)
-			`STATE_FETCH0: begin
+			`STATE_FETCH0_1: begin
 				case(next_instr0_op)
 					`OP_LIMM32, `OP_LBSET: begin
 						cr_next_skip = cr[`BIT_CR_SKIP];
@@ -57,7 +57,7 @@ module Controller(clk, reset,
 					default: cr_next_skip = 0;
 				endcase
 			end
-			`STATE_FETCH1: begin
+			`STATE_FETCH1_1: begin
 				cr_next_skip = 0;
 			end
 			`STATE_EXEC: begin
@@ -73,9 +73,9 @@ module Controller(clk, reset,
 	//
 	always begin
 		case (current_state)
-			`STATE_FETCH0:	memaddr = pc;
-			`STATE_FETCH1:	memaddr = pc;
-			default:		memaddr = 0;
+			`STATE_FETCH0_0:	memaddr = pc;
+			`STATE_FETCH1_0:	memaddr = pc;
+			default:			memaddr = 0;
 		endcase
 		#1;
 	end
@@ -87,14 +87,14 @@ module Controller(clk, reset,
 	always @(posedge clk) begin
 		if(reset == 1) begin
 			pc = 0;
-			current_state = `STATE_FETCH0;
+			current_state = `STATE_FETCH0_0;
 			cr = 0;
 		end
 		if(reset == 0 && cr[`BIT_CR_HLT] == 0) begin
-			if(current_state == `STATE_FETCH0) begin
+			if(current_state == `STATE_FETCH0_1) begin
 				instr0 = memdata;
 			end
-			if(current_state == `STATE_FETCH1) begin
+			if(current_state == `STATE_FETCH1_1) begin
 				instr1 = memdata;
 			end
 			current_state <= next_state;
@@ -103,30 +103,36 @@ module Controller(clk, reset,
 		end
 	end
 	// state transition
-	assign next_state = genNextState(current_state, next_instr0_op);
-	function [3:0] genNextState (
-		input [3:0] currentState, 
-		input [7:0] next_instr0_op);
-		case (currentState)
-			`STATE_FETCH0: begin
+	always begin
+		#1;
+		case (current_state)
+			`STATE_FETCH0_0:
+					next_state = `STATE_FETCH0_1;
+			`STATE_FETCH0_1: begin
 				case(next_instr0_op)
 					`OP_LIMM32, `OP_LBSET: begin
-						genNextState = `STATE_FETCH1;
+						next_state = `STATE_FETCH1_0;
 					end
 					default: begin
-						genNextState = 
-							(cr[`BIT_CR_SKIP] == 1 ? `STATE_FETCH0 : `STATE_EXEC);
+						if(cr[`BIT_CR_SKIP])
+							next_state = `STATE_FETCH0_0;
+						else					
+							next_state = `STATE_EXEC;
 					end
 				endcase
 			end
-			`STATE_FETCH1: begin
-				genNextState = 
-					(cr[`BIT_CR_SKIP] == 1 ? `STATE_FETCH0 : `STATE_EXEC);
+			`STATE_FETCH1_0:
+					next_state = `STATE_FETCH0_1;
+			`STATE_FETCH1_1: begin
+				if(cr[`BIT_CR_SKIP] == 1)
+					next_state = `STATE_FETCH0_0;
+				else
+					next_state = `STATE_EXEC;
 			end
 			`STATE_EXEC: begin
-				genNextState = `STATE_FETCH0;
+				next_state = `STATE_FETCH0_0;
 			end
-			default: genNextState = `STATE_FETCH0;
+			default: next_state = `STATE_HLT;
 		endcase
-	endfunction
+	end
 endmodule

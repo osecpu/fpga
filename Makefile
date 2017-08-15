@@ -1,6 +1,7 @@
 SRCS=osecpu.v \
-		 alu.v ireg.v preg.v labeltable.v \
-		 led7seg.v memory.v datapath.v controller.v mmu.v addrdec.v
+	alu.v ireg.v preg.v labeltable.v \
+	led7seg.v memory.v datapath.v controller.v \
+	mmu.v addrdec.v blockram.v
 TOPMODULE=osecpu
 
 DIR_QBIN=~/intelFPGA_lite/17.0/quartus/bin
@@ -22,7 +23,7 @@ lspgm:
 	$(DIR_QBIN)/quartus_pgm -l
 
 install:
-	$(DIR_QBIN)/quartus_pgm -c 1 -m jtag -o P\;$(TOPMODULE).sof@1
+	$(DIR_QBIN)/quartus_pgm -c 1 -m jtag -o P\;output_files/$(TOPMODULE).sof@1
 
 resetpgm:
 	-killall jtagd

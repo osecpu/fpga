@@ -1,6 +1,9 @@
-`define STATE_FETCH0	4'd0
-`define STATE_FETCH1	4'd1
-`define STATE_EXEC		4'd3
+`define STATE_FETCH0_0		4'd0
+`define STATE_FETCH0_1		4'd1
+`define STATE_FETCH1_0		4'd2
+`define STATE_FETCH1_1		4'd3
+`define STATE_EXEC		4'd4
+`define STATE_HLT		4'd15
 
 `define BIT_CR_HLT		0
 `define BIT_CR_SKIP		1
