@@ -1,54 +1,47 @@
-COMMON_SRCS=osecpu.v \
+SRCS=osecpu.v \
 		 alu.v ireg.v preg.v labeltable.v \
 		 led7seg.v memory.v datapath.v controller.v mmu.v addrdec.v
+TOPMODULE=osecpu
 
-TEST_SRCS=testbench.v $(COMMON_SRCS)
-TOP_SRCS=top.v $(COMMON_SRCS)
+DIR_QBIN=~/intelFPGA_lite/17.0/quartus/bin
+
+default:
+	$(DIR_QBIN)/quartus_map $(TOPMODULE)
+	$(DIR_QBIN)/quartus_fit $(TOPMODULE)
+	$(DIR_QBIN)/quartus_asm $(TOPMODULE)
 
 
-.PHONY: run test
+i: $(SRCS) Makefile
+	iverilog -Wall -o $(TOPMODULE).out -s $(TOPMODULE) $(SRCS)
 
-testbench.out : $(TEST_SRCS) rom.hex Makefile
-	iverilog -Wall -o $*.out -s testbench $(TEST_SRCS)
+vcd: $(SRCS) testbench.v Makefile
+	iverilog -Wall -o testbench.out -s testbench $(SRCS) testbench.v
+	vvp testbench.out
 
-check:
-	iverilog -Wall -o check.out -s check check.v
-	vvp check.out
+lspgm:
+	$(DIR_QBIN)/quartus_pgm -l
+
+install:
+	$(DIR_QBIN)/quartus_pgm -c 1 -m jtag -o P\;$(TOPMODULE).sof@1
+
+resetpgm:
+	-killall jtagd
+	sudo $(DIR_QBIN)/jtagd
 
 clean:
+	-rm -r db/ incremental_db/
+	-rm *.rpt
+	-rm *.jdi
+	-rm *.summary
+	-rm *.pin
 	-rm *.out
-	-rm *.vcd
+	-rm *.sld
+	-rm *.sof
 
-run:
-	make testbench.vcd
-	open testbench.vcd
+log:
+	-cat $(TOPMODULE).map.summary
 
-testall:
-	make test_addrdec
 
-test:
-	-rm testbench.vcd
-	make testbench.vcd
 
-vcd:
-	make test
-	open testbench.vcd
 
-test_addrdec :
-	make addrdec.vcd
-test_mmu :
-	make mmu.vcd
 
-%.out : %.v Makefile
-	iverilog -Wall -o $*.out -s testbench_$* $*.v
-
-MMU_SRCS=mmu.v labeltable.v addrdec.v
-mmu.out : $(MMU_SRCS) Makefile
-	iverilog -Wall -o mmu.out -s testbench_mmu $(MMU_SRCS)
-
-%.vcd : %.out Makefile
-	vvp $*.out
-
-reset_blaster :
-	-killall jtagd
-	sudo ~/intelFPGA_lite/17.0/quartus/bin/jtagd
