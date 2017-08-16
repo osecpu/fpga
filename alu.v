@@ -17,8 +17,13 @@ module ALUController(d0, d1, dout, op, iscmp);
 				//
 				`ALU_OP_ADD:	calcALUResult = d0 + d1;
 				`ALU_OP_SUB:	calcALUResult = d0 - d1;
+				`ALU_OP_MUL:	calcALUResult = d0 * d1;
+				
 				`ALU_OP_SHL:	calcALUResult = d0 << d1;
 				`ALU_OP_SAR:	calcALUResult = d0 >>> d1;
+				`ALU_OP_DIV:	calcALUResult = d0 / d1;
+				`ALU_OP_MOD:	calcALUResult = d0 % d1;
+
 				default:		calcALUResult = 0;
 			endcase
 		end

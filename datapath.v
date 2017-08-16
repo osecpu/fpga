@@ -88,8 +88,10 @@ module DataPath(
 			`STATE_EXEC_1, `STATE_STORE_0: begin
 				case (instr0_op)
 					`OP_OR, `OP_XOR, `OP_AND, 
-						`OP_ADD, `OP_SUB, 
-						`OP_SHL, `OP_SAR 
+						`OP_ADD, `OP_SUB,
+						`OP_MUL,
+						`OP_SHL, `OP_SAR,
+						`OP_DIV, `OP_MOD
 						: begin
 						alu_d0 = ireg_d0;
 						alu_d1 = ireg_d1;
@@ -250,8 +252,10 @@ module DataPath(
 						ireg_r1 = 0;
 					end
 					`OP_OR, `OP_XOR, `OP_AND, 
-						`OP_ADD, `OP_SUB, 
+						`OP_ADD, `OP_SUB,
+						`OP_MUL,
 						`OP_SHL, `OP_SAR,
+						`OP_DIV, `OP_MOD,
 						`OP_CMPE, `OP_CMPNE, 
 						`OP_CMPL, `OP_CMPGE, 
 						`OP_CMPLE, `OP_CMPG,
@@ -286,8 +290,10 @@ module DataPath(
 						ireg_we = 1;
 					end
 					`OP_OR, `OP_XOR, `OP_AND, 
-						`OP_ADD, `OP_SUB, 
+						`OP_ADD, `OP_SUB,
+						`OP_MUL,
 						`OP_SHL, `OP_SAR,
+						`OP_DIV, `OP_MOD,
 						//
 						`OP_CMPE, `OP_CMPNE, 
 						`OP_CMPL, `OP_CMPGE, 

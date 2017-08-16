@@ -20,11 +20,11 @@
 `define ALU_OP_AND		4'h2
 `define ALU_OP_ADD		4'h4
 `define ALU_OP_SUB		4'h5
-//`define ALU_OP_MUL		4'h6
+`define ALU_OP_MUL		4'h6
 `define ALU_OP_SHL		4'h8
 `define ALU_OP_SAR		4'h9
-//`define ALU_OP_DIV		4'hA
-//`define ALU_OP_MOD		4'hB
+`define ALU_OP_DIV		4'hA
+`define ALU_OP_MOD		4'hB
 
 `define ALU_CC_E		4'h0
 `define ALU_CC_NE		4'h1
@@ -52,9 +52,14 @@
 
 `define OP_ADD			8'h14
 `define OP_SUB			8'h15
+`define OP_MUL			8'h16
 
 `define OP_SHL			8'h18
 `define OP_SAR			8'h19
+`define OP_DIV			8'h1a
+`define OP_MOD			8'h1b
+
+
 
 `define OP_PCP			8'h1e
 
