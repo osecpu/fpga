@@ -56,7 +56,7 @@ module DataPath(
 	always begin
 		// MMU
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_EXEC_1, `STATE_STORE_0: begin
 				case (instr0_op)
 					`OP_PLIMM : begin
 						mmu_reqType = `LBTYPE_CODE;
@@ -85,11 +85,13 @@ module DataPath(
 
 		// ALU
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_EXEC_1, `STATE_STORE_0: begin
 				case (instr0_op)
 					`OP_OR, `OP_XOR, `OP_AND, 
-						`OP_ADD, `OP_SUB, 
-						`OP_SHL, `OP_SAR 
+						`OP_ADD, `OP_SUB,
+						`OP_MUL,
+						`OP_SHL, `OP_SAR,
+						`OP_DIV, `OP_MOD
 						: begin
 						alu_d0 = ireg_d0;
 						alu_d1 = ireg_d1;
@@ -143,7 +145,7 @@ module DataPath(
 		endcase
 		// LabelTable write
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_STORE_0: begin
 				case (instr0_op)
 					`OP_LBSET: begin
 						lbt_lbidw = instr0_imm16;
@@ -171,7 +173,7 @@ module DataPath(
 		endcase
 		// PReg R
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_EXEC_0, `STATE_EXEC_1: begin
 				case (instr0_op)
 					`OP_PADD: begin
 						preg_p0 = instr0_operand0;
@@ -202,7 +204,7 @@ module DataPath(
 		endcase
 		// PReg W
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_STORE_0: begin
 				case (instr0_op)
 					`OP_PLIMM: begin
 						preg_pw = instr0_operand0;
@@ -239,7 +241,7 @@ module DataPath(
 		endcase
 		// IReg R
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_EXEC_0, `STATE_EXEC_1: begin
 				case (instr0_op)
 					`OP_PADD, `OP_CND: begin
 						ireg_r0 = instr0_operand0;
@@ -250,8 +252,10 @@ module DataPath(
 						ireg_r1 = 0;
 					end
 					`OP_OR, `OP_XOR, `OP_AND, 
-						`OP_ADD, `OP_SUB, 
+						`OP_ADD, `OP_SUB,
+						`OP_MUL,
 						`OP_SHL, `OP_SAR,
+						`OP_DIV, `OP_MOD,
 						`OP_CMPE, `OP_CMPNE, 
 						`OP_CMPL, `OP_CMPGE, 
 						`OP_CMPLE, `OP_CMPG,
@@ -273,7 +277,7 @@ module DataPath(
 		endcase
 		// IReg W
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_STORE_0: begin
 				case (instr0_op)
 					`OP_LIMM16: begin
 						ireg_rw = instr0_operand0;
@@ -286,8 +290,10 @@ module DataPath(
 						ireg_we = 1;
 					end
 					`OP_OR, `OP_XOR, `OP_AND, 
-						`OP_ADD, `OP_SUB, 
+						`OP_ADD, `OP_SUB,
+						`OP_MUL,
 						`OP_SHL, `OP_SAR,
+						`OP_DIV, `OP_MOD,
 						//
 						`OP_CMPE, `OP_CMPNE, 
 						`OP_CMPL, `OP_CMPGE, 

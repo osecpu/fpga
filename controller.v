@@ -24,7 +24,7 @@ module Controller(clk, reset,
 	always begin
 		case (current_state)
 			`STATE_FETCH0_0, `STATE_FETCH1_0: pc_next = pc + 1;
-			`STATE_EXEC: begin
+			`STATE_EXEC_0: begin
 				if(pc_update_req) pc_next = pc_update_addr;
 				else pc_next = pc;
 			end
@@ -43,7 +43,7 @@ module Controller(clk, reset,
 	assign cr_next = {6'b0, cr_next_skip, cr_next_hlt};
 	always begin
 		// HLT bit
-		if(current_state == `STATE_EXEC && instr0_op == `OP_HLT) begin
+		if(current_state == `STATE_EXEC_1 && instr0_op == `OP_HLT) begin
 			cr_next_hlt = 1;
 		end
 		else cr_next_hlt = cr[`BIT_CR_HLT];
@@ -60,15 +60,17 @@ module Controller(clk, reset,
 			`STATE_FETCH1_1: begin
 				cr_next_skip = 0;
 			end
-			`STATE_EXEC: begin
+			`STATE_EXEC_0: begin
+				cr_next_skip = 0;
+			end
+			`STATE_EXEC_1: begin
 				if(instr0_op == `OP_CND && ireg_d0_lsb == 0) begin
 					cr_next_skip = 1;
 				end
 				else cr_next_skip = 0;
 			end
 			default: cr_next_skip = cr[`BIT_CR_SKIP];
-		endcase
-		#1;
+		endcase		#1;
 	end
 	//
 	always begin
@@ -118,7 +120,7 @@ module Controller(clk, reset,
 						if(cr[`BIT_CR_SKIP])
 							next_state = `STATE_FETCH0_0;
 						else					
-							next_state = `STATE_EXEC;
+							next_state = `STATE_EXEC_0;
 					end
 				endcase
 			end
@@ -128,9 +130,18 @@ module Controller(clk, reset,
 				if(cr[`BIT_CR_SKIP])
 					next_state = `STATE_FETCH0_0;
 				else
-					next_state = `STATE_EXEC;
+					next_state = `STATE_EXEC_0;
 			end
-			`STATE_EXEC: begin
+			`STATE_EXEC_0: begin
+				next_state = `STATE_EXEC_1;
+			end
+			`STATE_EXEC_1: begin
+				next_state = `STATE_STORE_0;
+			end
+			`STATE_STORE_0: begin
+				next_state = `STATE_STORE_1;
+			end
+			`STATE_STORE_1: begin
 				next_state = `STATE_FETCH0_0;
 			end
 			default: next_state = `STATE_HLT;

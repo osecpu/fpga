@@ -69,6 +69,10 @@ set_location_assignment PIN_23 -to clk_org
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name VERILOG_FILE mmu.v
+set_global_assignment -name VERILOG_FILE def.v
+set_global_assignment -name VERILOG_FILE check.v
+set_global_assignment -name VERILOG_FILE blockram.v
 set_global_assignment -name VERILOG_FILE addrdec.v
 set_global_assignment -name VERILOG_FILE datapath.v
 set_global_assignment -name VERILOG_FILE labeltable.v
