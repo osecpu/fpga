@@ -83,7 +83,7 @@ module OSECPU(clk, reset, dr, cr, pc);
 		if(instr0_op == 8'hD3) begin
 			// CPDR
 			case (current_state) 
-				`STATE_EXEC: begin
+				`STATE_STORE_0: begin
 					dr = ireg_d0;
 				end
 			endcase

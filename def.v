@@ -2,7 +2,11 @@
 `define STATE_FETCH0_1		4'd1
 `define STATE_FETCH1_0		4'd2
 `define STATE_FETCH1_1		4'd3
-`define STATE_EXEC		4'd4
+`define STATE_EXEC_0			4'd4
+`define STATE_EXEC_1			4'd5
+`define STATE_STORE_0		4'd6
+`define STATE_STORE_1		4'd7
+
 `define STATE_HLT		4'd15
 
 `define BIT_CR_HLT		0

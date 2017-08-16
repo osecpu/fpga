@@ -56,7 +56,7 @@ module DataPath(
 	always begin
 		// MMU
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_EXEC_1, `STATE_STORE_0: begin
 				case (instr0_op)
 					`OP_PLIMM : begin
 						mmu_reqType = `LBTYPE_CODE;
@@ -85,7 +85,7 @@ module DataPath(
 
 		// ALU
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_EXEC_1, `STATE_STORE_0: begin
 				case (instr0_op)
 					`OP_OR, `OP_XOR, `OP_AND, 
 						`OP_ADD, `OP_SUB, 
@@ -143,7 +143,7 @@ module DataPath(
 		endcase
 		// LabelTable write
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_STORE_0: begin
 				case (instr0_op)
 					`OP_LBSET: begin
 						lbt_lbidw = instr0_imm16;
@@ -171,7 +171,7 @@ module DataPath(
 		endcase
 		// PReg R
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_EXEC_0, `STATE_EXEC_1: begin
 				case (instr0_op)
 					`OP_PADD: begin
 						preg_p0 = instr0_operand0;
@@ -202,7 +202,7 @@ module DataPath(
 		endcase
 		// PReg W
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_STORE_0: begin
 				case (instr0_op)
 					`OP_PLIMM: begin
 						preg_pw = instr0_operand0;
@@ -239,7 +239,7 @@ module DataPath(
 		endcase
 		// IReg R
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_EXEC_0, `STATE_EXEC_1: begin
 				case (instr0_op)
 					`OP_PADD, `OP_CND: begin
 						ireg_r0 = instr0_operand0;
@@ -273,7 +273,7 @@ module DataPath(
 		endcase
 		// IReg W
 		case (current_state)
-			`STATE_EXEC: begin
+			`STATE_STORE_0: begin
 				case (instr0_op)
 					`OP_LIMM16: begin
 						ireg_rw = instr0_operand0;
